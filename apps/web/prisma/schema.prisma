@@ -30,6 +30,8 @@ model User {
   cor          String
   iniciais     String
   criador      Boolean  @default(false)
+  role         String   @default("pescador") // "pescador" | "vendedor"
+  nomeNegocio  String?  // só p/ vendedor
 
   // Stats exibidos (denormalizados; mantêm os números do mock e são
   // ajustados nas mutações). Ver UserStats em @fisgou/shared.
@@ -49,6 +51,7 @@ model User {
   followers     Follow[]       @relation("following")
   notifications Notification[] @relation("recipient")
   actorOf       Notification[] @relation("actor")
+  checkIns      CheckIn[]
 }
 
 model Species {
@@ -140,6 +143,19 @@ model Pesqueiro {
   cor         String
   lat         Float?
   lng         Float?
+
+  checkIns CheckIn[]
+}
+
+model CheckIn {
+  id          String   @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  pesqueiro   Pesqueiro @relation(fields: [pesqueiroId], references: [id], onDelete: Cascade)
+  pesqueiroId String
+  criadoEm    DateTime  @default(now())
+
+  @@index([pesqueiroId])
 }
 
 model Badge {

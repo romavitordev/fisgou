@@ -24,6 +24,9 @@ export type PesqueiroTipo =
 
 export type BadgeTier = "normal" | "lendario";
 
+/** Papel escolhido no cadastro — define o fluxo/campos extras. */
+export type UserRole = "pescador" | "vendedor";
+
 // ── Entidades ───────────────────────────────────────────────────────
 
 /**
@@ -59,6 +62,10 @@ export interface User {
   iniciais: string;
   /** Selo "Criador" (âmbar). */
   criador?: boolean;
+  /** Papel escolhido no cadastro. */
+  role?: UserRole;
+  /** Nome do negócio (só p/ role "vendedor"). */
+  nomeNegocio?: string;
   stats: UserStats;
 }
 

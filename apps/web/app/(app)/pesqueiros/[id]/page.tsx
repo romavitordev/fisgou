@@ -6,16 +6,16 @@ import {
   Star,
   MapPin,
   MessageCircle,
-  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Avatar } from "@/components/ui/Avatar";
 import { RarityDot } from "@/components/ui/RarityDot";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { CheckInButton } from "@/components/pesqueiros/CheckInButton";
 import { pesqueiroTipoLabel } from "@/lib/rarity";
 import { formatNota } from "@/lib/format";
-import { getPesqueiroDetail } from "@/lib/queries";
+import { getPesqueiroDetail, getViewer } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +24,10 @@ export default async function PesqueiroDetalhe({
 }: {
   params: { id: string };
 }) {
-  const data = await getPesqueiroDetail(params.id);
+  const viewer = await getViewer();
+  const data = await getPesqueiroDetail(params.id, viewer?.id ?? null);
   if (!data) notFound();
-  const { pesqueiro, especies, amigos } = data;
+  const { pesqueiro, especies, amigos, totalCheckIns, jaFezCheckIn } = data;
 
   return (
     <PageContainer className="pb-6">
@@ -88,10 +89,7 @@ export default async function PesqueiroDetalhe({
             <MessageCircle className="h-4 w-4" aria-hidden="true" />
             Falar com Pesqueiro
           </Button>
-          <Button variant="secondary" className="flex-1">
-            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-            Check-in
-          </Button>
+          <CheckInButton pesqueiroId={pesqueiro.id} jaFezCheckIn={jaFezCheckIn} />
         </div>
       </div>
 
@@ -110,34 +108,39 @@ export default async function PesqueiroDetalhe({
         </div>
       </section>
 
-      {/* Amigos que pescaram aqui */}
+      {/* Quem fez check-in aqui (substitui amostra fixa por dados reais) */}
       <section className="px-4 pt-6">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-text-2">
-          Amigos que pescaram aqui
+        <h2 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-text-2">
+          Quem pescou aqui
+          {totalCheckIns > 0 && (
+            <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[11px] font-bold text-brand">
+              {totalCheckIns}
+            </span>
+          )}
         </h2>
-        <div className="flex items-center gap-3">
-          <div className="flex -space-x-3">
-            {amigos.map((a) => (
-              <Avatar
-                key={a.id}
-                iniciais={a.iniciais}
-                cor={a.cor}
-                size="md"
-                ring
-              />
-            ))}
+        {amigos.length > 0 ? (
+          <div className="flex items-center gap-3">
+            <div className="flex -space-x-3">
+              {amigos.map((a) => (
+                <Avatar
+                  key={a.id}
+                  iniciais={a.iniciais}
+                  cor={a.cor}
+                  src={a.imagemUrl}
+                  size="md"
+                  ring
+                />
+              ))}
+            </div>
+            <span className="text-sm text-text-2">
+              {totalCheckIns === 1 ? "1 check-in" : `${totalCheckIns} check-ins`}
+            </span>
           </div>
-          <button
-            type="button"
-            className="text-sm font-medium text-brand hover:underline"
-          >
-            Ver todos
-          </button>
-        </div>
-        {/* Nota de privacidade: respeita LocationPrivacy "oculto". */}
-        <p className="mt-3 text-xs text-text-2">
-          2 amigos ocultaram a localização e não aparecem aqui.
-        </p>
+        ) : (
+          <p className="text-sm text-text-2">
+            Ninguém fez check-in aqui ainda. Seja o primeiro!
+          </p>
+        )}
       </section>
     </PageContainer>
   );

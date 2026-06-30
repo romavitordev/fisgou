@@ -22,7 +22,7 @@ async function handleUnico(base: string) {
 }
 
 export async function POST(req: Request) {
-  const { nome, email, senha } = await req.json().catch(() => ({}));
+  const { nome, email, senha, role, nomeNegocio } = await req.json().catch(() => ({}));
 
   if (!nome || String(nome).trim().length < 2) {
     return NextResponse.json({ error: "Informe seu nome." }, { status: 400 });
@@ -42,6 +42,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Esse e-mail já tem conta." }, { status: 409 });
   }
 
+  const papel = role === "vendedor" ? "vendedor" : "pescador";
+
   const handle = await handleUnico(emailNorm.split("@")[0]);
   const user = await prisma.user.create({
     data: {
@@ -51,6 +53,11 @@ export async function POST(req: Request) {
       passwordHash: bcrypt.hashSync(String(senha), 10),
       cor: CORES[Math.floor(Math.random() * CORES.length)],
       iniciais: iniciaisDe(String(nome)),
+      role: papel,
+      nomeNegocio:
+        papel === "vendedor" && typeof nomeNegocio === "string"
+          ? nomeNegocio.trim() || null
+          : null,
       // Usuário novo começa como comum, com modelo de "amigos".
       amigos: 0,
     },

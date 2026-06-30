@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { User } from "@fisgou/shared";
+import type { User, UserRole } from "@fisgou/shared";
 
 /**
  * Autenticação real (FASE 2): bate nos Route Handlers /api/auth/*.
@@ -18,7 +18,13 @@ interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, senha: string) => Promise<void>;
-  signup: (nome: string, email: string, senha: string) => Promise<void>;
+  signup: (
+    nome: string,
+    email: string,
+    senha: string,
+    role?: UserRole,
+    nomeNegocio?: string,
+  ) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -53,8 +59,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(user);
   };
 
-  const signup = async (nome: string, email: string, senha: string) => {
-    const { user } = await postJson("/api/auth/signup", { nome, email, senha });
+  const signup = async (
+    nome: string,
+    email: string,
+    senha: string,
+    role?: UserRole,
+    nomeNegocio?: string,
+  ) => {
+    const { user } = await postJson("/api/auth/signup", {
+      nome,
+      email,
+      senha,
+      role,
+      nomeNegocio,
+    });
     setUser(user);
   };
 

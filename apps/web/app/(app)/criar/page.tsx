@@ -16,10 +16,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
+import { RarityDot } from "@/components/ui/RarityDot";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { SpeciesPicker } from "@/components/feed/SpeciesPicker";
 import { cn } from "@/lib/cn";
 import { privacyLabel, privacyHint } from "@/lib/rarity";
-import type { LocationPrivacy } from "@fisgou/shared";
+import type { LocationPrivacy, Species } from "@fisgou/shared";
 
 const opcoesPrivacidade: {
   id: LocationPrivacy;
@@ -38,6 +40,8 @@ export default function CriarPage() {
     useState<LocationPrivacy>("aproximado");
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [especie, setEspecie] = useState<Species | null>(null);
+  const [mostrarPicker, setMostrarPicker] = useState(false);
   const [publicando, setPublicando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -76,6 +80,7 @@ export default function CriarPage() {
           legenda,
           localPrivacidade: privacidade,
           imagemUrl,
+          speciesId: especie?.id,
         }),
       });
       if (!res.ok) throw new Error();
@@ -161,15 +166,47 @@ export default function CriarPage() {
 
         {/* Marcações opcionais */}
         <div className="flex gap-3">
-          <Chip tone="neutral" className="flex-1 justify-center py-2.5">
-            <Fish className="h-4 w-4 text-brand" aria-hidden="true" />
-            Marcar espécie
-          </Chip>
+          {especie ? (
+            <Chip
+              tone="brand"
+              active
+              className="flex-1 justify-center py-2.5"
+              onClick={() => setEspecie(null)}
+            >
+              <RarityDot rarity={especie.raridade} />
+              {especie.nome}
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </Chip>
+          ) : (
+            <Chip
+              tone="neutral"
+              className="flex-1 justify-center py-2.5"
+              onClick={() => setMostrarPicker(true)}
+            >
+              <Fish className="h-4 w-4 text-brand" aria-hidden="true" />
+              Marcar espécie
+            </Chip>
+          )}
           <Chip tone="neutral" className="flex-1 justify-center py-2.5">
             <MapPin className="h-4 w-4 text-brand" aria-hidden="true" />
             Marcar pesqueiro
           </Chip>
         </div>
+        {especie && (
+          <p className="text-xs text-text-2">
+            Capturas com espécie marcada entram em análise para verificação.
+          </p>
+        )}
+
+        {mostrarPicker && (
+          <SpeciesPicker
+            onSelect={(s) => {
+              setEspecie(s);
+              setMostrarPicker(false);
+            }}
+            onClose={() => setMostrarPicker(false)}
+          />
+        )}
 
         {/* Privacidade da localização */}
         <fieldset>

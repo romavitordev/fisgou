@@ -28,6 +28,7 @@ import type {
   PesqueiroTipo,
   BadgeTier,
   NotificationType,
+  UserRole,
 } from "@fisgou/shared";
 
 export function toUser(u: PrismaUser): User {
@@ -43,6 +44,8 @@ export function toUser(u: PrismaUser): User {
     cor: u.cor,
     iniciais: u.iniciais,
     criador: u.criador,
+    role: (u.role as UserRole | undefined) ?? "pescador",
+    nomeNegocio: u.nomeNegocio ?? undefined,
     stats: {
       peixes: u.peixes,
       especies: u.especies,

@@ -94,16 +94,40 @@ export async function getPesqueiros() {
   return list.map(toPesqueiro);
 }
 
-export async function getPesqueiroDetail(id: string) {
+export async function getPesqueiroDetail(id: string, viewerId: string | null = null) {
   const p = await prisma.pesqueiro.findUnique({ where: { id } });
   if (!p) return null;
-  // Espécies comuns / amigos: amostra do banco (sem mapa curado no schema).
+
+  // Espécies comuns: amostra do banco (sem mapa curado no schema).
   const especies = await prisma.species.findMany({ take: 4, orderBy: { nome: "asc" } });
-  const amigos = await prisma.user.findMany({ take: 3, orderBy: { nome: "asc" } });
+
+  // Amigos que pescaram aqui = check-ins reais (mais recentes, sem repetir usuário).
+  const checkIns = await prisma.checkIn.findMany({
+    where: { pesqueiroId: id },
+    orderBy: { criadoEm: "desc" },
+    include: { user: true },
+    take: 30,
+  });
+  const vistos = new Set<string>();
+  const amigos = [];
+  for (const c of checkIns) {
+    if (vistos.has(c.userId)) continue;
+    vistos.add(c.userId);
+    amigos.push(c.user);
+    if (amigos.length >= 6) break;
+  }
+
+  const totalCheckIns = await prisma.checkIn.count({ where: { pesqueiroId: id } });
+  const meuCheckIn = viewerId
+    ? !!(await prisma.checkIn.findFirst({ where: { pesqueiroId: id, userId: viewerId } }))
+    : false;
+
   return {
     pesqueiro: toPesqueiro(p),
     especies: especies.map(toSpecies),
     amigos: amigos.map(toUser),
+    totalCheckIns,
+    jaFezCheckIn: meuCheckIn,
   };
 }
 
