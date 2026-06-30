@@ -50,6 +50,10 @@ export interface User {
   bio?: string;
   /** Foto de perfil enviada pelo usuário. */
   imagemUrl?: string;
+  /** Foto de capa do perfil. */
+  bannerUrl?: string;
+  /** Cor de destaque escolhida (chave de paleta — ver lib/accent). */
+  accent?: string;
   /** Cor do avatar placeholder (até existir upload de foto). */
   cor: string;
   iniciais: string;

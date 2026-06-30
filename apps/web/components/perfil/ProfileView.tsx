@@ -162,7 +162,16 @@ export function ProfileView({
     <div className="pb-6">
       {/* Banner full-bleed */}
       <div className="relative">
-        <div className="h-36 w-full bg-brand sm:h-44" aria-hidden="true" />
+        {user.bannerUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.bannerUrl}
+            alt={`Capa de ${user.nome}`}
+            className="h-36 w-full object-cover sm:h-44"
+          />
+        ) : (
+          <div className="h-36 w-full bg-brand sm:h-44" aria-hidden="true" />
+        )}
 
         {isMe && (
           <div className="absolute right-3 top-3">
@@ -261,7 +270,10 @@ export function ProfileView({
 
         <div className="flex gap-3 px-4 pt-4">
           {isMe ? (
-            <Button className="flex-1">
+            <Button
+              className="flex-1"
+              onClick={() => router.push("/perfil/editar")}
+            >
               <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
               Editar perfil
             </Button>

@@ -76,6 +76,13 @@
   }
 }
 
+@layer components {
+  /* Campo de formulário padrão. */
+  .campo {
+    @apply w-full rounded-xl border border-border bg-surface px-4 py-2.5 text-sm placeholder:text-text-2 focus:border-brand focus:outline-none;
+  }
+}
+
 @layer utilities {
   /* Esconde scrollbar nos carrosséis de chips, mantendo scroll. */
   .no-scrollbar::-webkit-scrollbar {

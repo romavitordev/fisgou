@@ -25,6 +25,8 @@ model User {
   cidade       String?
   bio          String?
   imagemUrl    String?  // foto de perfil enviada pelo usuário
+  bannerUrl    String?  // foto de capa do perfil
+  accent       String?  // cor de destaque escolhida (chave de paleta)
   cor          String
   iniciais     String
   criador      Boolean  @default(false)

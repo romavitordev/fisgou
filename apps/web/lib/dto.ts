@@ -38,6 +38,8 @@ export function toUser(u: PrismaUser): User {
     cidade: u.cidade ?? undefined,
     bio: u.bio ?? undefined,
     imagemUrl: u.imagemUrl ?? undefined,
+    bannerUrl: u.bannerUrl ?? undefined,
+    accent: u.accent ?? undefined,
     cor: u.cor,
     iniciais: u.iniciais,
     criador: u.criador,

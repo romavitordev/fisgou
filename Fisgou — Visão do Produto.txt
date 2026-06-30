@@ -1,0 +1,518 @@
+# 🎣 Fisgou — Visão do Produto
+
+## Missão
+
+O Fisgou nasceu para ser a maior plataforma dedicada à pesca, conectando pescadores, criadores de conteúdo, pesqueiros, lojas e marcas em um único ecossistema.
+
+Mais do que uma rede social, o objetivo é acompanhar toda a jornada de uma pescaria:
+
+* Antes da pescaria
+* Durante a pescaria
+* Depois da pescaria
+
+Toda funcionalidade do produto deve fortalecer uma dessas etapas.
+
+---
+
+# Visão
+
+Queremos que, no futuro, quando alguém pensar em pesca, pense automaticamente no Fisgou.
+
+Assim como:
+
+* jogadores lembram da Steam;
+* profissionais lembram do LinkedIn;
+* fotógrafos lembram do Instagram;
+
+o pescador deve lembrar do Fisgou.
+
+---
+
+# Evolução da Plataforma
+
+## Fase 1
+
+Rede social da pesca.
+
+O usuário publica fotos, comenta, segue pessoas e conhece outros pescadores.
+
+↓
+
+## Fase 2
+
+Comunidade da pesca.
+
+Além das publicações, o usuário registra suas pescarias, espécies e acompanha amigos.
+
+↓
+
+## Fase 3
+
+Ecossistema da pesca.
+
+Criadores, pesqueiros, vendedores e pescadores passam a conviver dentro da mesma plataforma.
+
+↓
+
+## Fase 4
+
+Plataforma completa.
+
+O Fisgou se torna um ambiente onde toda a economia da pesca acontece.
+
+---
+
+# Público-alvo
+
+## 1. Pescadores
+
+É o principal público.
+
+Desejam:
+
+* registrar capturas;
+* conhecer novos pesqueiros;
+* encontrar amigos;
+* descobrir espécies;
+* compartilhar experiências;
+* organizar pescarias.
+
+---
+
+## 2. Criadores de Conteúdo
+
+Produzem vídeos, dicas e entretenimento.
+
+Objetivos:
+
+* crescer audiência;
+* fazer lives;
+* receber doações;
+* vender conteúdo exclusivo;
+* monetizar sua comunidade.
+
+---
+
+## 3. Pesqueiros
+
+Perfis oficiais dos estabelecimentos.
+
+Podem:
+
+* divulgar informações;
+* responder mensagens;
+* receber avaliações;
+* criar eventos;
+* atrair novos visitantes.
+
+---
+
+## 4. Lojas
+
+Lojas físicas ou online.
+
+Podem:
+
+* vender equipamentos;
+* criar vitrines;
+* divulgar promoções;
+* conversar com clientes.
+
+---
+
+## 5. Marcas
+
+Fabricantes e empresas do setor.
+
+Podem:
+
+* patrocinar criadores;
+* lançar produtos;
+* anunciar campanhas;
+* criar eventos.
+
+---
+
+# Os três pilares do Fisgou
+
+## 🎣 Compartilhar
+
+Rede social.
+
+Inclui:
+
+* Feed
+* Curtidas
+* Comentários
+* Seguir usuários
+* Stories (futuro)
+* Lives
+* Mensagens
+* Compartilhamento
+
+---
+
+## 📖 Registrar
+
+Histórico pessoal.
+
+Inclui:
+
+* Catálogo de espécies
+* Histórico de capturas
+* Pesqueiros visitados
+* Check-ins
+* Linha do tempo
+* Recordes
+* Estatísticas
+
+---
+
+## 🏆 Evoluir
+
+Sistema de progressão.
+
+Inclui:
+
+* Insígnias
+* Conquistas
+* Raridades
+* Desafios
+* Níveis
+* Rankings
+* Objetivos
+
+---
+
+# Jornada do Usuário
+
+## Antes da pescaria
+
+O usuário:
+
+* procura pesqueiros;
+* conversa com amigos;
+* cria grupos;
+* combina uma pescaria;
+* vê avaliações;
+* encontra lugares próximos.
+
+---
+
+## Durante a pescaria
+
+O usuário:
+
+* faz check-in;
+* registra capturas;
+* compartilha fotos;
+* faz live;
+* conversa pelo chat.
+
+---
+
+## Depois da pescaria
+
+O usuário:
+
+* publica suas capturas;
+* adiciona espécies ao catálogo;
+* ganha conquistas;
+* recebe curtidas;
+* comenta com amigos.
+
+---
+
+# Sistema de Espécies (Fisgados)
+
+Um dos diferenciais da plataforma.
+
+Cada peixe capturado entra automaticamente no catálogo do usuário.
+
+Cada espécie possui:
+
+* nome;
+* foto;
+* descrição;
+* habitat;
+* dificuldade;
+* raridade.
+
+Exemplo:
+
+Espécies descobertas
+
+47 / 186
+
+Progresso
+
+25%
+
+Raridade
+
+* Comum
+* Incomum
+* Rara
+* Épica
+* Lendária
+
+Isso cria um forte incentivo para continuar pescando e completar a coleção.
+
+---
+
+# Sistema de Raridade
+
+Cada espécie possui um nível de raridade.
+
+Exemplo:
+
+🟢 Comum
+
+🔵 Incomum
+
+🟣 Rara
+
+🟠 Épica
+
+🟡 Lendária
+
+Peixes lendários geram muito prestígio dentro da comunidade.
+
+---
+
+# Sistema de Insígnias
+
+As insígnias representam conquistas reais do pescador.
+
+Exemplos:
+
+🐟 Primeira captura
+
+🎣 Dez espécies descobertas
+
+🏅 Cinquenta espécies descobertas
+
+👑 Mestre das Tilápias
+
+🌊 Explorador de Rios
+
+🏞 Explorador de Pesqueiros
+
+📍 Cem check-ins
+
+📸 Cem publicações
+
+❤️ Dez mil curtidas recebidas
+
+🤝 Cem amigos
+
+🎥 Primeira Live
+
+⭐ Criador Verificado
+
+💎 Mil membros
+
+🏪 Loja Destaque
+
+Essas conquistas ficam visíveis no perfil.
+
+---
+
+# Sistema de Desafios
+
+O Fisgou poderá lançar desafios temporários.
+
+Exemplo:
+
+Desafio de Inverno
+
+Capture:
+
+* Tilápia
+* Pacu
+* Tambaqui
+
+Recompensa:
+
+Insígnia exclusiva.
+
+Quem não participar perde aquela conquista exclusiva.
+
+---
+
+# Criadores de Conteúdo
+
+O usuário poderá ativar um perfil profissional.
+
+Recursos:
+
+* Lives
+* Área de membros
+* Conteúdo exclusivo
+* Donates
+* Assinaturas
+* Estatísticas
+* Selos especiais
+* Ranking de criadores
+
+---
+
+# Marketplace
+
+Usuários poderão se tornar vendedores.
+
+Cada loja terá:
+
+* perfil próprio;
+* catálogo;
+* avaliações;
+* chat;
+* promoções;
+* estoque;
+* pedidos;
+* cupons.
+
+Tudo integrado ao restante da plataforma.
+
+---
+
+# Perfil de Pesqueiro
+
+Os pesqueiros terão páginas oficiais.
+
+Informações:
+
+* localização;
+* espécies disponíveis;
+* horários;
+* valores;
+* fotos;
+* contato;
+* avaliações;
+* check-ins;
+* visitantes recentes.
+
+Futuramente:
+
+* reservas;
+* eventos;
+* torneios.
+
+---
+
+# Chat
+
+Sistema de mensagens inspirado em Instagram/Messenger.
+
+Inclui:
+
+* conversa individual;
+* grupos;
+* conversa com pesqueiros;
+* conversa com lojas.
+
+---
+
+# Combinar Pescaria
+
+Dentro do chat será possível criar eventos.
+
+Exemplo:
+
+Pescaria no sábado
+
+Pesqueiro X
+
+08:00
+
+Convidar amigos.
+
+Todos recebem lembretes e acompanham o evento.
+
+---
+
+# Check-ins
+
+O usuário poderá registrar sua presença.
+
+Isso permitirá:
+
+* histórico de visitas;
+* contador de pescarias;
+* amigos que estiveram ali;
+* estatísticas.
+
+---
+
+# Descoberta
+
+Ferramentas para encontrar:
+
+* pescadores;
+* espécies;
+* pesqueiros;
+* lojas;
+* eventos.
+
+Incluindo filtros por:
+
+* cidade;
+* distância;
+* espécie;
+* popularidade.
+
+---
+
+# Economia da Plataforma
+
+No futuro, todas as partes se conectam.
+
+Exemplo:
+
+1. Um criador faz uma live.
+2. Durante a live utiliza uma isca vendida por uma loja.
+3. Os espectadores compram o produto.
+4. O criador pode receber comissão ou patrocínio.
+5. A pescaria acontece em um pesqueiro cadastrado.
+6. O pesqueiro ganha novos visitantes.
+7. Os visitantes fazem check-in.
+8. Publicam suas capturas.
+9. Novos usuários descobrem o Fisgou.
+
+O crescimento de um participante beneficia todos os outros.
+
+---
+
+# Princípios do Produto
+
+Toda nova funcionalidade deve responder pelo menos uma destas perguntas:
+
+* Ajuda o pescador?
+* Aproxima pessoas?
+* Incentiva novas pescarias?
+* Valoriza as conquistas do usuário?
+* Fortalece a comunidade?
+* Gera valor para criadores, lojas ou pesqueiros?
+
+Se a resposta for "não", provavelmente a funcionalidade não deve entrar no produto.
+
+---
+
+# Objetivo Final
+
+O Fisgou não pretende ser apenas uma rede social.
+
+O objetivo é construir o maior ecossistema digital da pesca, onde o usuário possa:
+
+* compartilhar suas pescarias;
+* registrar sua evolução;
+* conhecer novos lugares;
+* aprender;
+* comprar equipamentos;
+* vender produtos;
+* acompanhar criadores;
+* fazer lives;
+* organizar pescarias;
+* participar de uma comunidade apaixonada pelo esporte.
+
+Queremos que o Fisgou seja o primeiro aplicativo que um pescador abre antes de sair para pescar e o último que fecha quando volta para casa.
