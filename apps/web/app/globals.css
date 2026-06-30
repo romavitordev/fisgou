@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens (tema claro) ─────────────────────────────────── */
+:root {
+  --bg: #fbfaf6;
+  --surface: #ffffff;
+  --surface-2: #f3f2ec;
+  --text: #1a1a1a;
+  --text-2: #6b6f6c;
+  --border: #e7e6df;
+  --brand: #14916b;
+  --brand-fg: #ffffff;
+  --brand-soft: #e3f1eb;
+  --amber: #e0a11a;
+  --amber-soft: #fbf0d6;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+/* ── Tema escuro ────────────────────────────────────────────────── */
+.dark {
+  --bg: #0f1412;
+  --surface: #1a201e;
+  --surface-2: #232b28;
+  --text: #ecece6;
+  --text-2: #9ba29f;
+  --border: #2a322f;
+  --brand: #2db98b;
+  --brand-fg: #0f1412;
+  --brand-soft: #15302a;
+  --amber: #e8b23f;
+  --amber-soft: #2e2415;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Transição suave (~0.5s) ao trocar de tema. Só anima cores ligadas
+     aos tokens; hovers usam `transition-colors` (150ms) que sobrescreve
+     a duração, então não ficam lentos. */
+  *,
+  *::before,
+  *::after {
+    transition:
+      background-color 0.5s ease,
+      border-color 0.5s ease;
+  }
+
+  /* Foco de teclado sempre visível (acessibilidade). */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Evita "pulo" de tema no primeiro paint. */
+  ::selection {
+    background: var(--brand-soft);
+    color: var(--text);
+  }
+}
+
+@layer utilities {
+  /* Esconde scrollbar nos carrosséis de chips, mantendo scroll. */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* ── Microinterações (discretas) ─────────────────────────────── */
+
+  /* Entrada de conteúdo (cards). */
+  .animate-rise {
+    animation: rise 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Transição de rota (só opacidade — não mexe em transform p/ não
+     brigar com elementos sticky). */
+  .animate-fade {
+    animation: fade 0.28s ease both;
+  }
+
+  /* "Pop" do coração ao curtir. */
+  .animate-pop {
+    animation: pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Skeleton de carregamento (preparando estados async da Fase 2). */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--surface-2) 25%,
+      var(--border) 37%,
+      var(--surface-2) 63%
+    );
+    background-size: 400% 100%;
+    animation: shimmer 1.4s ease infinite;
+  }
+
+  /* Reveal ao entrar na viewport (landing). A classe .is-visible é
+     adicionada via IntersectionObserver (ScrollReveal). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Peixe nadando (loading) — vai e volta com leve sobe-desce. */
+  .animate-swim {
+    animation: swim 2.4s ease-in-out infinite;
+  }
+  /* Drift suave (peixes decorativos da landing). */
+  .animate-float {
+    animation: float 7s ease-in-out infinite;
+  }
+  /* Bolha subindo. */
+  .animate-bubble {
+    animation: bubble 2.8s ease-in infinite;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+@keyframes swim {
+  0% {
+    transform: translateX(-14px) translateY(0) rotate(-4deg);
+  }
+  50% {
+    transform: translateX(14px) translateY(-6px) rotate(4deg);
+  }
+  100% {
+    transform: translateX(-14px) translateY(0) rotate(-4deg);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-18px) translateX(10px) rotate(6deg);
+  }
+  100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes bubble {
+  0% {
+    transform: translateY(8px) scale(0.6);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-26px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ── View Transitions: reveal circular ao trocar de tema ───────── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: theme-reveal 0.5s ease-in-out;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0% at var(--tt-x, 50%) var(--tt-y, 50%));
+  }
+  to {
+    clip-path: circle(150% at var(--tt-x, 50%) var(--tt-y, 50%));
+  }
+}
+
+/* Acessibilidade: respeita quem prefere menos movimento. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-new(root),
+  ::view-transition-old(root) {
+    animation: none !important;
+  }
+}

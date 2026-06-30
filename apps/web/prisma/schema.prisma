@@ -1,0 +1,164 @@
+// Fisgou — schema do banco (FASE 2).
+//
+// Provider = sqlite p/ dev local sem setup. Os "enums" do domínio
+// (Rarity, CatchStatus, LocationPrivacy, WaterType, PesqueiroTipo,
+// NotificationType, BadgeTier) ficam como String porque o SQLite não
+// tem enums nativos — os valores são validados pelos tipos de
+// @fisgou/shared na aplicação. Ao migrar pro Postgres (Neon), troca-se
+// o provider e esses campos podem virar enums nativos.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  nome         String
+  handle       String   @unique
+  email        String   @unique
+  passwordHash String
+  cidade       String?
+  bio          String?
+  imagemUrl    String?  // foto de perfil enviada pelo usuário
+  cor          String
+  iniciais     String
+  criador      Boolean  @default(false)
+
+  // Stats exibidos (denormalizados; mantêm os números do mock e são
+  // ajustados nas mutações). Ver UserStats em @fisgou/shared.
+  peixes     Int  @default(0)
+  especies   Int  @default(0)
+  seguidores Int? // criador
+  seguindo   Int? // criador
+  amigos     Int? // usuário comum
+
+  criadoEm DateTime @default(now())
+
+  posts         Post[]
+  comments      Comment[]
+  collection    CollectionEntry[]
+  likes         Like[]
+  following     Follow[]       @relation("follower")
+  followers     Follow[]       @relation("following")
+  notifications Notification[] @relation("recipient")
+  actorOf       Notification[] @relation("actor")
+}
+
+model Species {
+  id             String @id @default(cuid())
+  nome           String
+  nomeCientifico String
+  raridade       String // Rarity
+  agua           String // WaterType
+  cor            String
+
+  posts         Post[]
+  collection    CollectionEntry[]
+  notifications Notification[]
+}
+
+model CollectionEntry {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  species     Species   @relation(fields: [speciesId], references: [id])
+  speciesId   String
+  status      String // CatchStatus
+  capturadoEm DateTime?
+
+  @@unique([userId, speciesId])
+}
+
+model Post {
+  id               String   @id @default(cuid())
+  autor            User     @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  autorId          String
+  criadoEm         DateTime @default(now())
+  imagemCor        String
+  imagemUrl        String? // foto real enviada (senão usa imagemCor)
+  legenda          String
+  species          Species? @relation(fields: [speciesId], references: [id])
+  speciesId        String?
+  status           String? // CatchStatus
+  localPrivacidade String? // LocationPrivacy
+
+  // Contadores denormalizados (mantêm os números do seed e são
+  // ajustados nas mutações). Like[] guarda o estado por usuário.
+  curtidas    Int @default(0)
+  comentarios Int @default(0)
+
+  comments      Comment[]
+  likes         Like[]
+  notifications Notification[]
+}
+
+model Comment {
+  id       String   @id @default(cuid())
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String
+  autor    User     @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  autorId  String
+  texto    String
+  criadoEm DateTime @default(now())
+}
+
+model Like {
+  id     String @id @default(cuid())
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@unique([postId, userId])
+}
+
+model Follow {
+  id          String @id @default(cuid())
+  follower    User   @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String
+  following   User   @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+
+  @@unique([followerId, followingId])
+}
+
+model Pesqueiro {
+  id          String  @id @default(cuid())
+  nome        String
+  tipo        String // PesqueiroTipo
+  nota        Float
+  avaliacoes  Int
+  distanciaKm Float
+  endereco    String?
+  cor         String
+  lat         Float?
+  lng         Float?
+}
+
+model Badge {
+  id    String @id @default(cuid())
+  nome  String
+  icon  String
+  tier  String // BadgeTier
+  ordem Int    @default(0)
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  recipient   User     @relation("recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId String
+  tipo        String // NotificationType
+  actor       User?    @relation("actor", fields: [actorId], references: [id])
+  actorId     String?
+  post        Post?    @relation(fields: [postId], references: [id])
+  postId      String?
+  species     Species? @relation(fields: [speciesId], references: [id])
+  speciesId   String?
+  criadoEm    DateTime @default(now())
+  lida        Boolean  @default(false)
+}

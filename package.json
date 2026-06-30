@@ -1,0 +1,13 @@
+{
+  "name": "fisgou",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Fisgou — comunidade de pescadores (front-end). Monorepo pnpm.",
+  "scripts": {
+    "dev": "pnpm --filter @fisgou/web dev",
+    "build": "pnpm --filter @fisgou/web build",
+    "start": "pnpm --filter @fisgou/web start",
+    "lint": "pnpm --filter @fisgou/web lint"
+  },
+  "packageManager": "pnpm@9.15.9"
+}
