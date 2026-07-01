@@ -29,21 +29,23 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 - RF: notificações + badge que zera ao visualizar.
 - RF: busca por pescadores/espécies/pesqueiros com filtro por tipo.
 
+### Feitos ✅ (rodada seguinte)
+- **Edição de perfil**: nome, bio, cidade, foto de usuário, **foto de banner**, **virar criador**, **cor de destaque personalizável** (`/perfil/editar`).
+- **Check-in funcional** no pesqueiro: registra presença real (model `CheckIn`), conta visitas, "Quem pescou aqui" usa dados reais.
+- **Cadastro com papéis**: passo inicial **"Sou Pescador" / "Sou Vendedor"** + campo "nome do negócio" para vendedor.
+- **Marcar espécie na criação**: seletor (`SpeciesPicker`) grava `speciesId`, post entra em análise.
+
 ### Pendentes ⬜ (pedidos)
-1. **Marcar espécie e pesqueiro na criação** — hoje os chips "Marcar espécie/pesqueiro" são visuais.
+1. **Marcar pesqueiro** na criação (igual à espécie, falta o seletor + campo `pesqueiroId` no Post).
 2. **Marcar amigos** numa publicação.
 3. **Enquete no post** (pergunta + opções + votos).
-4. **Check-in funcional** no pesqueiro (registra presença, conta visitas, aparece em "amigos que pescaram aqui").
-5. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
-6. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).
-7. **"Falar com Pesqueiro"** — abrir conversa com o estabelecimento (já renomeado o botão).
-8. **Filtro de cidade** na busca de pesqueiros + **pesqueiros próximos** (raio em km via geolocalização).
-9. **Edição de perfil**: nome, foto de usuário, **foto de banner**, bio.
-10. **Tornar-se criador** (perfil profissional) — alterna o papel e libera recursos de criador.
-11. **Personalização de tema do usuário** — escolher a cor de destaque (hoje fixo no teal `#14916B`).
-12. **Cadastro com papéis** — perguntar no início **"Sou Pescador" / "Sou Vendedor"** + campos extras por papel.
-13. **Mensagens** real (a tela é stub).
-14. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
+4. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
+5. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).
+6. **"Falar com Pesqueiro"** — abrir conversa de verdade com o estabelecimento (botão já existe, sem chat por trás ainda).
+7. **Filtro de cidade** na busca de pesqueiros + **pesqueiros próximos** (raio em km via geolocalização).
+8. **Mensagens** real (a tela é stub).
+9. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
+10. **Painel de vendedor** (usar o `role="vendedor"` já salvo para liberar telas/recursos).
 
 ---
 
