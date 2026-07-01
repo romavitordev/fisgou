@@ -45,6 +45,8 @@ function buildText(n: Notification): string {
       return `${nome} começou a te seguir.`;
     case "verificacao":
       return `Sua captura de ${n.especie?.nome ?? "espécie"} foi verificada! 🎣`;
+    case "marcacao":
+      return `${nome} marcou você em uma publicação.`;
     default:
       return "Você tem uma nova notificação.";
   }

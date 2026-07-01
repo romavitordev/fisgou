@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageCircle, Share2, Plus, MapPin } from "lucide-react";
+import { MessageCircle, Share2, Plus, MapPin, Users } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { RarityDot } from "@/components/ui/RarityDot";
@@ -19,7 +19,7 @@ export function PostCard({
   onDeleted?: (id: string) => void;
   redirectOnDelete?: string;
 }) {
-  const { autor, especie, status, pesqueiro } = post;
+  const { autor, especie, status, pesqueiro, marcados } = post;
 
   return (
     <Card className="overflow-hidden">
@@ -103,8 +103,28 @@ export function PostCard({
         </div>
       )}
 
-      {/* Legenda */}
-      <p className="px-3 py-3 text-sm leading-relaxed">{post.legenda}</p>
+      {/* Legenda + amigos marcados */}
+      <div className="space-y-1.5 px-3 py-3">
+        <p className="text-sm leading-relaxed">{post.legenda}</p>
+        {marcados && marcados.length > 0 && (
+          <p className="flex flex-wrap items-center gap-x-1 text-xs text-text-2">
+            <Users className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
+            com{" "}
+            {marcados.map((u, i) => (
+              <span key={u.id}>
+                <Link
+                  href={`/u/${u.handle}`}
+                  className="font-medium text-brand hover:underline"
+                >
+                  {u.nome}
+                </Link>
+                {i < marcados.length - 1 ? "," : ""}
+              </span>
+            ))}
+          </p>
+        )}
+      </div>
+
 
       {/* Rodapé de ações */}
       <div className="flex items-center gap-5 border-t border-border px-3 py-2.5 text-text-2">

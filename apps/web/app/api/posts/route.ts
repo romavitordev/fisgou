@@ -19,9 +19,8 @@ export async function POST(req: Request) {
   const me = await getCurrentDbUser();
   if (!me) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
-  const { legenda, localPrivacidade, speciesId, pesqueiroId, imagemUrl } = await req
-    .json()
-    .catch(() => ({}));
+  const { legenda, localPrivacidade, speciesId, pesqueiroId, amigosIds, imagemUrl } =
+    await req.json().catch(() => ({}));
 
   if (!legenda || !String(legenda).trim()) {
     return NextResponse.json({ error: "Escreva uma legenda." }, { status: 400 });
@@ -45,6 +44,27 @@ export async function POST(req: Request) {
     where: { id: me.id },
     data: { peixes: { increment: 1 } },
   });
+
+  // Marcar amigos: cria PostTag para cada id válido (≠ autor, sem repetir)
+  // e notifica cada marcado.
+  if (Array.isArray(amigosIds) && amigosIds.length > 0) {
+    const ids = [...new Set(amigosIds.map(String))].filter((id) => id !== me.id);
+    const validos = await prisma.user.findMany({
+      where: { id: { in: ids } },
+      select: { id: true },
+    });
+    for (const u of validos) {
+      await prisma.postTag.create({ data: { postId: post.id, userId: u.id } });
+      await prisma.notification.create({
+        data: {
+          recipientId: u.id,
+          tipo: "marcacao",
+          actorId: me.id,
+          postId: post.id,
+        },
+      });
+    }
+  }
 
   return NextResponse.json({ id: post.id });
 }

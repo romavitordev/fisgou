@@ -35,13 +35,13 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 - **Cadastro com papéis**: passo inicial **"Sou Pescador" / "Sou Vendedor"** + campo "nome do negócio" para vendedor.
 - **Marcar espécie na criação**: seletor (`SpeciesPicker`) grava `speciesId`, post entra em análise.
 
-### Feitos ✅ (rodada favicon + pesqueiro)
+### Feitos ✅ (rodada favicon + pesqueiro + amigos)
 - **Favicon do site** — `app/icon.svg` (peixe teal green, claro/escuro) + `app/apple-icon.png`.
 - **Marcar pesqueiro na criação** — `Post.pesqueiroId` + relação; `GET /api/pesqueiros` alimenta o `PesqueiroPicker` (mesmo padrão do `SpeciesPicker`); a chip "Marcar pesqueiro" no `/criar` agora funciona; o `PostCard` mostra a localização (estilo Instagram) linkando pro `/pesqueiros/[id]`.
+- **Marcar amigos numa publicação** — model `PostTag` (postId+userId); `GET /api/users/following` alimenta o `FriendsPicker` (multi-select de quem você segue); `POST /api/posts` aceita `amigosIds[]`, cria as marcações e **notifica** cada marcado (tipo novo `marcacao`); `PostCard` mostra "com Fulano, Ciclano" linkando pros perfis.
 
 ### Pendentes ⬜ (pedidos)
-1. **Marcar amigos** numa publicação.
-3. **Enquete no post** (pergunta + opções + votos).
+1. **Enquete no post** (pergunta + opções + votos).
 4. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
 5. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).
 6. **"Falar com Pesqueiro"** — abrir conversa de verdade com o estabelecimento (botão já existe, sem chat por trás ainda).

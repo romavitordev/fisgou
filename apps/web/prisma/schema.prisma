@@ -53,6 +53,7 @@ model User {
   actorOf       Notification[] @relation("actor")
   checkIns      CheckIn[]
   commentLikes  CommentLike[]
+  taggedIn      PostTag[]
 }
 
 model Species {
@@ -103,6 +104,17 @@ model Post {
   comments      Comment[]
   likes         Like[]
   notifications Notification[]
+  marcados      PostTag[]
+}
+
+model PostTag {
+  id     String @id @default(cuid())
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@unique([postId, userId])
 }
 
 model Comment {

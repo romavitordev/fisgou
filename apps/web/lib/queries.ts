@@ -40,7 +40,12 @@ export async function getFeed(viewerId: string | null = null) {
   const posts = await prisma.post.findMany({
     orderBy: { criadoEm: "desc" },
     take: FEED_LIMIT,
-    include: { autor: true, species: true, pesqueiro: true },
+    include: {
+      autor: true,
+      species: true,
+      pesqueiro: true,
+      marcados: { include: { user: true } },
+    },
   });
   const liked = await likedSet(viewerId, posts.map((p) => p.id));
   return posts.map((p) => toPost(p, liked.has(p.id)));
@@ -59,7 +64,12 @@ async function commentLikedSet(viewerId: string | null, commentIds: string[]) {
 export async function getPostDetail(id: string, viewerId: string | null = null) {
   const post = await prisma.post.findUnique({
     where: { id },
-    include: { autor: true, species: true, pesqueiro: true },
+    include: {
+      autor: true,
+      species: true,
+      pesqueiro: true,
+      marcados: { include: { user: true } },
+    },
   });
   if (!post) return null;
   const comentarios = await prisma.comment.findMany({
@@ -73,6 +83,16 @@ export async function getPostDetail(id: string, viewerId: string | null = null) 
     post: toPost(post, liked.has(post.id)),
     comentarios: comentarios.map((c) => toComment(c, commentsLiked.has(c.id))),
   };
+}
+
+/** Usuários que `userId` segue (para marcar amigos numa publicação). */
+export async function getFollowing(userId: string): Promise<User[]> {
+  const follows = await prisma.follow.findMany({
+    where: { followerId: userId },
+    include: { following: true },
+    orderBy: { following: { nome: "asc" } },
+  });
+  return follows.map((f) => toUser(f.following));
 }
 
 // ── Espécies / coleção ──────────────────────────────────────────────
@@ -155,7 +175,12 @@ export async function getProfile(handle: string, viewerId: string | null) {
   const postsRaw = await prisma.post.findMany({
     where: { autorId: u.id },
     orderBy: { criadoEm: "desc" },
-    include: { autor: true, species: true, pesqueiro: true },
+    include: {
+      autor: true,
+      species: true,
+      pesqueiro: true,
+      marcados: { include: { user: true } },
+    },
   });
   const liked = await likedSet(viewerId, postsRaw.map((p) => p.id));
   const col = await getCollectionData(u.id);

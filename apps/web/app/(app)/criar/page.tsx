@@ -13,6 +13,7 @@ import {
   Lock,
   Check,
   Loader2,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -20,9 +21,10 @@ import { RarityDot } from "@/components/ui/RarityDot";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SpeciesPicker } from "@/components/feed/SpeciesPicker";
 import { PesqueiroPicker } from "@/components/feed/PesqueiroPicker";
+import { FriendsPicker } from "@/components/feed/FriendsPicker";
 import { cn } from "@/lib/cn";
 import { privacyLabel, privacyHint } from "@/lib/rarity";
-import type { LocationPrivacy, Species, Pesqueiro } from "@fisgou/shared";
+import type { LocationPrivacy, Species, Pesqueiro, User } from "@fisgou/shared";
 
 const opcoesPrivacidade: {
   id: LocationPrivacy;
@@ -43,8 +45,10 @@ export default function CriarPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [especie, setEspecie] = useState<Species | null>(null);
   const [pesqueiro, setPesqueiro] = useState<Pesqueiro | null>(null);
+  const [amigos, setAmigos] = useState<User[]>([]);
   const [mostrarPicker, setMostrarPicker] = useState(false);
   const [mostrarPesqueiroPicker, setMostrarPesqueiroPicker] = useState(false);
+  const [mostrarAmigosPicker, setMostrarAmigosPicker] = useState(false);
   const [publicando, setPublicando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -85,6 +89,7 @@ export default function CriarPage() {
           imagemUrl,
           speciesId: especie?.id,
           pesqueiroId: pesqueiro?.id,
+          amigosIds: amigos.map((a) => a.id),
         }),
       });
       if (!res.ok) throw new Error();
@@ -213,6 +218,32 @@ export default function CriarPage() {
             </Chip>
           )}
         </div>
+        {/* Marcar amigos */}
+        {amigos.length > 0 ? (
+          <Chip
+            tone="brand"
+            active
+            className="w-full justify-center py-2.5"
+            onClick={() => setMostrarAmigosPicker(true)}
+          >
+            <Users className="h-4 w-4" aria-hidden="true" />
+            <span className="truncate">
+              {amigos.length === 1
+                ? amigos[0].nome
+                : `${amigos[0].nome} e mais ${amigos.length - 1}`}
+            </span>
+          </Chip>
+        ) : (
+          <Chip
+            tone="neutral"
+            className="w-full justify-center py-2.5"
+            onClick={() => setMostrarAmigosPicker(true)}
+          >
+            <Users className="h-4 w-4 text-brand" aria-hidden="true" />
+            Marcar amigos
+          </Chip>
+        )}
+
         {especie && (
           <p className="text-xs text-text-2">
             Capturas com espécie marcada entram em análise para verificação.
@@ -236,6 +267,17 @@ export default function CriarPage() {
               setMostrarPesqueiroPicker(false);
             }}
             onClose={() => setMostrarPesqueiroPicker(false)}
+          />
+        )}
+
+        {mostrarAmigosPicker && (
+          <FriendsPicker
+            jaSelecionados={amigos}
+            onConfirm={(users) => {
+              setAmigos(users);
+              setMostrarAmigosPicker(false);
+            }}
+            onClose={() => setMostrarAmigosPicker(false)}
           />
         )}
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Heart, MessageCircle, UserPlus, BadgeCheck } from "lucide-react";
+import { Heart, MessageCircle, UserPlus, BadgeCheck, Users } from "lucide-react";
 import { TopBar, TopBarTitle } from "@/components/layout/TopBar";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { redirect } from "next/navigation";
@@ -17,6 +17,7 @@ const iconByType: Record<NotificationType, typeof Heart> = {
   comentario: MessageCircle,
   seguidor: UserPlus,
   verificacao: BadgeCheck,
+  marcacao: Users,
 };
 
 const colorByType: Record<NotificationType, string> = {
@@ -24,6 +25,7 @@ const colorByType: Record<NotificationType, string> = {
   comentario: "text-brand",
   seguidor: "text-brand",
   verificacao: "text-brand",
+  marcacao: "text-brand",
 };
 
 function texto(n: Notification): string {
@@ -37,6 +39,8 @@ function texto(n: Notification): string {
       return `${nome} começou a te seguir.`;
     case "verificacao":
       return `Sua captura de ${n.especie?.nome ?? "espécie"} foi verificada! 🎣`;
+    case "marcacao":
+      return `${nome} marcou você em uma publicação.`;
     default:
       return "Nova notificação.";
   }

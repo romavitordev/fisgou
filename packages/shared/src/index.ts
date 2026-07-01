@@ -100,6 +100,8 @@ export interface Post {
   especie?: Species;
   /** Pesqueiro marcado na publicação (opcional). */
   pesqueiro?: Pesqueiro;
+  /** Amigos marcados na publicação. */
+  marcados?: User[];
   status?: CatchStatus;
   curtidas: number;
   comentarios: number;
@@ -126,7 +128,8 @@ export type NotificationType =
   | "curtida"
   | "comentario"
   | "seguidor"
-  | "verificacao";
+  | "verificacao"
+  | "marcacao";
 
 export interface Notification {
   id: string;

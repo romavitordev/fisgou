@@ -72,6 +72,7 @@ export function toPost(
     autor: PrismaUser;
     species: PrismaSpecies | null;
     pesqueiro?: PrismaPesqueiro | null;
+    marcados?: { user: PrismaUser }[];
   },
   liked = false,
 ): Post {
@@ -84,6 +85,7 @@ export function toPost(
     legenda: p.legenda,
     especie: p.species ? toSpecies(p.species) : undefined,
     pesqueiro: p.pesqueiro ? toPesqueiro(p.pesqueiro) : undefined,
+    marcados: p.marcados?.map((m) => toUser(m.user)),
     status: (p.status as CatchStatus | null) ?? undefined,
     curtidas: p.curtidas,
     comentarios: p.comentarios,
