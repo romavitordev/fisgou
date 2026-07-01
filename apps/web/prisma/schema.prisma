@@ -52,6 +52,7 @@ model User {
   notifications Notification[] @relation("recipient")
   actorOf       Notification[] @relation("actor")
   checkIns      CheckIn[]
+  commentLikes  CommentLike[]
 }
 
 model Species {
@@ -110,6 +111,19 @@ model Comment {
   autorId  String
   texto    String
   criadoEm DateTime @default(now())
+  curtidas Int      @default(0)
+
+  likes CommentLike[]
+}
+
+model CommentLike {
+  id        String  @id @default(cuid())
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@unique([commentId, userId])
 }
 
 model Like {

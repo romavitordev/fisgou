@@ -73,6 +73,11 @@ export function FeedAutoReload({
     scrollFeedTop();
   }
 
+  function removerPost(id: string) {
+    setPosts((ps) => ps.filter((p) => p.id !== id));
+    latestRef.current = latestRef.current.filter((p) => p.id !== id);
+  }
+
   const novos = useMemo(
     () => countNew(posts, pendentes),
     [posts, pendentes],
@@ -96,7 +101,7 @@ export function FeedAutoReload({
 
       <div className="space-y-3 p-3 pt-2">
         {posts.map((post) => (
-          <PostCard key={post.id} post={post} />
+          <PostCard key={post.id} post={post} onDeleted={removerPost} />
         ))}
       </div>
     </>

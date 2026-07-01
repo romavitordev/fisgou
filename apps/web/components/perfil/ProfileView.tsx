@@ -71,6 +71,7 @@ export function ProfileView({
   const [menuAberto, setMenuAberto] = useState(false);
   const [seguindo, setSeguindo] = useState(isFollowing);
   const [pendente, setPendente] = useState(false);
+  const [postsState, setPostsState] = useState(posts);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [removingAvatar, setRemovingAvatar] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -334,8 +335,16 @@ export function ProfileView({
         <div className="p-3">
           {tab === "publicacoes" && (
             <div className="space-y-3">
-              {posts.length > 0 ? (
-                posts.map((p) => <PostCard key={p.id} post={p} />)
+              {postsState.length > 0 ? (
+                postsState.map((p) => (
+                  <PostCard
+                    key={p.id}
+                    post={p}
+                    onDeleted={(id) =>
+                      setPostsState((ps) => ps.filter((x) => x.id !== id))
+                    }
+                  />
+                ))
               ) : (
                 <EmptyState texto="Nenhuma publicação ainda." />
               )}

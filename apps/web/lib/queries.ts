@@ -46,6 +46,16 @@ export async function getFeed(viewerId: string | null = null) {
   return posts.map((p) => toPost(p, liked.has(p.id)));
 }
 
+/** Conjunto de commentIds curtidos pelo viewer. */
+async function commentLikedSet(viewerId: string | null, commentIds: string[]) {
+  if (!viewerId || commentIds.length === 0) return new Set<string>();
+  const likes = await prisma.commentLike.findMany({
+    where: { userId: viewerId, commentId: { in: commentIds } },
+    select: { commentId: true },
+  });
+  return new Set(likes.map((l) => l.commentId));
+}
+
 export async function getPostDetail(id: string, viewerId: string | null = null) {
   const post = await prisma.post.findUnique({
     where: { id },
@@ -58,9 +68,10 @@ export async function getPostDetail(id: string, viewerId: string | null = null) 
     include: { autor: true },
   });
   const liked = await likedSet(viewerId, [post.id]);
+  const commentsLiked = await commentLikedSet(viewerId, comentarios.map((c) => c.id));
   return {
     post: toPost(post, liked.has(post.id)),
-    comentarios: comentarios.map(toComment),
+    comentarios: comentarios.map((c) => toComment(c, commentsLiked.has(c.id))),
   };
 }
 

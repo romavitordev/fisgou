@@ -28,7 +28,7 @@ export default async function PostPage({ params }: { params: { id: string } }) {
       </TopBar>
 
       <div className="p-3">
-        <PostCard post={data.post} />
+        <PostCard post={data.post} redirectOnDelete="/feed" />
       </div>
 
       <CommentsSection

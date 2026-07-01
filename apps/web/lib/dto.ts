@@ -89,6 +89,7 @@ export function toPost(
 
 export function toComment(
   c: PrismaComment & { autor: PrismaUser },
+  liked = false,
 ): Comment {
   return {
     id: c.id,
@@ -96,7 +97,8 @@ export function toComment(
     autor: toUser(c.autor),
     texto: c.texto,
     criadoEm: c.criadoEm.toISOString(),
-    curtidas: 0,
+    curtidas: c.curtidas,
+    liked,
   };
 }
 

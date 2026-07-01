@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Heart, Send } from "lucide-react";
+import { Heart, Send, Trash2 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
+import { cn } from "@/lib/cn";
 import { tempoRelativo } from "@/lib/format";
 import type { Comment, User } from "@fisgou/shared";
 
 /**
  * Lista + composição de comentários (estilo Twitter/Reddit).
- * Persiste via POST /api/posts/[id]/comments.
+ * Persiste via POST /api/posts/[id]/comments. Curtir e apagar são
+ * funcionais (POST /api/comments/[id]/like, DELETE .../comments/[id]).
  */
 export function CommentsSection({
   postId,
@@ -22,6 +24,7 @@ export function CommentsSection({
   const [comentarios, setComentarios] = useState(iniciais);
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [apagando, setApagando] = useState<string | null>(null);
 
   async function enviar(e: FormEvent) {
     e.preventDefault();
@@ -41,6 +44,53 @@ export function CommentsSection({
       }
     } finally {
       setEnviando(false);
+    }
+  }
+
+  async function curtir(c: Comment) {
+    const alvo = c.id;
+    // Otimista.
+    setComentarios((cs) =>
+      cs.map((x) =>
+        x.id === alvo
+          ? { ...x, liked: !x.liked, curtidas: x.curtidas + (x.liked ? -1 : 1) }
+          : x,
+      ),
+    );
+    try {
+      const res = await fetch(`/api/comments/${alvo}/like`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setComentarios((cs) =>
+          cs.map((x) =>
+            x.id === alvo ? { ...x, liked: data.liked, curtidas: data.curtidas } : x,
+          ),
+        );
+      }
+    } catch {
+      // reverte em caso de erro de rede
+      setComentarios((cs) =>
+        cs.map((x) =>
+          x.id === alvo
+            ? { ...x, liked: !x.liked, curtidas: x.curtidas + (x.liked ? -1 : 1) }
+            : x,
+        ),
+      );
+    }
+  }
+
+  async function apagar(commentId: string) {
+    if (apagando) return;
+    setApagando(commentId);
+    try {
+      const res = await fetch(`/api/posts/${postId}/comments/${commentId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setComentarios((cs) => cs.filter((x) => x.id !== commentId));
+      }
+    } finally {
+      setApagando(null);
     }
   }
 
@@ -72,28 +122,54 @@ export function CommentsSection({
       )}
 
       <ul className="space-y-4">
-        {comentarios.map((c) => (
-          <li key={c.id} className="flex gap-3">
-            <Avatar iniciais={c.autor.iniciais} cor={c.autor.cor} size="sm" src={c.autor.imagemUrl} />
-            <div className="min-w-0 flex-1">
-              <div className="rounded-2xl bg-surface-2 px-3 py-2">
-                <p className="text-sm">
-                  <span className="font-semibold">{c.autor.nome}</span>{" "}
-                  <span className="text-text-2">@{c.autor.handle}</span>
-                </p>
-                <p className="mt-0.5 text-sm leading-relaxed">{c.texto}</p>
+        {comentarios.map((c) => {
+          const dono = viewer?.id === c.autor.id;
+          return (
+            <li key={c.id} className="flex gap-3">
+              <Avatar iniciais={c.autor.iniciais} cor={c.autor.cor} size="sm" src={c.autor.imagemUrl} />
+              <div className="min-w-0 flex-1">
+                <div className="rounded-2xl bg-surface-2 px-3 py-2">
+                  <p className="text-sm">
+                    <span className="font-semibold">{c.autor.nome}</span>{" "}
+                    <span className="text-text-2">@{c.autor.handle}</span>
+                  </p>
+                  <p className="mt-0.5 text-sm leading-relaxed">{c.texto}</p>
+                </div>
+                <div className="mt-1 flex items-center gap-3 px-1 text-xs text-text-2">
+                  <span>{tempoRelativo(c.criadoEm)}</span>
+                  <button
+                    type="button"
+                    onClick={() => curtir(c)}
+                    aria-pressed={!!c.liked}
+                    aria-label="Curtir comentário"
+                    className={cn(
+                      "inline-flex items-center gap-1 transition-colors hover:text-text",
+                      c.liked && "text-red-500",
+                    )}
+                  >
+                    <Heart
+                      className={cn("h-3.5 w-3.5", c.liked && "fill-current")}
+                      aria-hidden="true"
+                    />
+                    {c.curtidas > 0 && c.curtidas}
+                  </button>
+                  {dono && (
+                    <button
+                      type="button"
+                      onClick={() => apagar(c.id)}
+                      disabled={apagando === c.id}
+                      aria-label="Apagar comentário"
+                      className="inline-flex items-center gap-1 transition-colors hover:text-red-500 disabled:opacity-50"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      {apagando === c.id ? "Apagando…" : "Apagar"}
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="mt-1 flex items-center gap-3 px-1 text-xs text-text-2">
-                <span>{tempoRelativo(c.criadoEm)}</span>
-                <button className="inline-flex items-center gap-1 hover:text-text">
-                  <Heart className="h-3.5 w-3.5" aria-hidden="true" />
-                  {c.curtidas > 0 && c.curtidas}
-                </button>
-                <button className="hover:text-text">Responder</button>
-              </div>
-            </div>
-          </li>
-        ))}
+            </li>
+          );
+        })}
       </ul>
     </section>
   );

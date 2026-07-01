@@ -114,6 +114,8 @@ export interface Comment {
   /** ISO date. */
   criadoEm: string;
   curtidas: number;
+  /** Se o usuário logado já curtiu (preenchido nas queries). */
+  liked?: boolean;
 }
 
 export type NotificationType =

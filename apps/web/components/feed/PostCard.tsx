@@ -5,11 +5,20 @@ import { Card } from "@/components/ui/Card";
 import { RarityDot } from "@/components/ui/RarityDot";
 import { VerificationSeal } from "@/components/ui/VerificationSeal";
 import { LikeButton } from "./LikeButton";
+import { PostMenu } from "./PostMenu";
 import { rarityLabel } from "@/lib/rarity";
 import { tempoRelativo } from "@/lib/format";
 import type { Post } from "@fisgou/shared";
 
-export function PostCard({ post }: { post: Post }) {
+export function PostCard({
+  post,
+  onDeleted,
+  redirectOnDelete,
+}: {
+  post: Post;
+  onDeleted?: (id: string) => void;
+  redirectOnDelete?: string;
+}) {
   const { autor, especie, status } = post;
 
   return (
@@ -29,6 +38,12 @@ export function PostCard({ post }: { post: Post }) {
             @{autor.handle} · {tempoRelativo(post.criadoEm)}
           </p>
         </div>
+        <PostMenu
+          postId={post.id}
+          autorId={autor.id}
+          onDeleted={onDeleted}
+          redirectOnDelete={redirectOnDelete}
+        />
       </div>
 
       {/* Imagem (placeholder colorido até existir upload). Altura limitada
