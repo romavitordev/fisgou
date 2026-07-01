@@ -40,7 +40,7 @@ export async function getFeed(viewerId: string | null = null) {
   const posts = await prisma.post.findMany({
     orderBy: { criadoEm: "desc" },
     take: FEED_LIMIT,
-    include: { autor: true, species: true },
+    include: { autor: true, species: true, pesqueiro: true },
   });
   const liked = await likedSet(viewerId, posts.map((p) => p.id));
   return posts.map((p) => toPost(p, liked.has(p.id)));
@@ -59,7 +59,7 @@ async function commentLikedSet(viewerId: string | null, commentIds: string[]) {
 export async function getPostDetail(id: string, viewerId: string | null = null) {
   const post = await prisma.post.findUnique({
     where: { id },
-    include: { autor: true, species: true },
+    include: { autor: true, species: true, pesqueiro: true },
   });
   if (!post) return null;
   const comentarios = await prisma.comment.findMany({
@@ -155,7 +155,7 @@ export async function getProfile(handle: string, viewerId: string | null) {
   const postsRaw = await prisma.post.findMany({
     where: { autorId: u.id },
     orderBy: { criadoEm: "desc" },
-    include: { autor: true, species: true },
+    include: { autor: true, species: true, pesqueiro: true },
   });
   const liked = await likedSet(viewerId, postsRaw.map((p) => p.id));
   const col = await getCollectionData(u.id);

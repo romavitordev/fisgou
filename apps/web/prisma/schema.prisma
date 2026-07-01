@@ -90,6 +90,8 @@ model Post {
   legenda          String
   species          Species? @relation(fields: [speciesId], references: [id])
   speciesId        String?
+  pesqueiro        Pesqueiro? @relation(fields: [pesqueiroId], references: [id])
+  pesqueiroId      String?
   status           String? // CatchStatus
   localPrivacidade String? // LocationPrivacy
 
@@ -164,6 +166,7 @@ model Pesqueiro {
   lng         Float?
 
   checkIns CheckIn[]
+  posts    Post[]
 }
 
 model CheckIn {

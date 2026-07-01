@@ -19,9 +19,10 @@ import { Chip } from "@/components/ui/Chip";
 import { RarityDot } from "@/components/ui/RarityDot";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SpeciesPicker } from "@/components/feed/SpeciesPicker";
+import { PesqueiroPicker } from "@/components/feed/PesqueiroPicker";
 import { cn } from "@/lib/cn";
 import { privacyLabel, privacyHint } from "@/lib/rarity";
-import type { LocationPrivacy, Species } from "@fisgou/shared";
+import type { LocationPrivacy, Species, Pesqueiro } from "@fisgou/shared";
 
 const opcoesPrivacidade: {
   id: LocationPrivacy;
@@ -41,7 +42,9 @@ export default function CriarPage() {
   const [arquivo, setArquivo] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [especie, setEspecie] = useState<Species | null>(null);
+  const [pesqueiro, setPesqueiro] = useState<Pesqueiro | null>(null);
   const [mostrarPicker, setMostrarPicker] = useState(false);
+  const [mostrarPesqueiroPicker, setMostrarPesqueiroPicker] = useState(false);
   const [publicando, setPublicando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -81,6 +84,7 @@ export default function CriarPage() {
           localPrivacidade: privacidade,
           imagemUrl,
           speciesId: especie?.id,
+          pesqueiroId: pesqueiro?.id,
         }),
       });
       if (!res.ok) throw new Error();
@@ -187,10 +191,27 @@ export default function CriarPage() {
               Marcar espécie
             </Chip>
           )}
-          <Chip tone="neutral" className="flex-1 justify-center py-2.5">
-            <MapPin className="h-4 w-4 text-brand" aria-hidden="true" />
-            Marcar pesqueiro
-          </Chip>
+          {pesqueiro ? (
+            <Chip
+              tone="brand"
+              active
+              className="flex-1 justify-center py-2.5"
+              onClick={() => setPesqueiro(null)}
+            >
+              <MapPin className="h-4 w-4" aria-hidden="true" />
+              <span className="truncate">{pesqueiro.nome}</span>
+              <X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            </Chip>
+          ) : (
+            <Chip
+              tone="neutral"
+              className="flex-1 justify-center py-2.5"
+              onClick={() => setMostrarPesqueiroPicker(true)}
+            >
+              <MapPin className="h-4 w-4 text-brand" aria-hidden="true" />
+              Marcar pesqueiro
+            </Chip>
+          )}
         </div>
         {especie && (
           <p className="text-xs text-text-2">
@@ -205,6 +226,16 @@ export default function CriarPage() {
               setMostrarPicker(false);
             }}
             onClose={() => setMostrarPicker(false)}
+          />
+        )}
+
+        {mostrarPesqueiroPicker && (
+          <PesqueiroPicker
+            onSelect={(p) => {
+              setPesqueiro(p);
+              setMostrarPesqueiroPicker(false);
+            }}
+            onClose={() => setMostrarPesqueiroPicker(false)}
           />
         )}
 

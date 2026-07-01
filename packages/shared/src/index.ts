@@ -98,6 +98,8 @@ export interface Post {
   imagemUrl?: string;
   legenda: string;
   especie?: Species;
+  /** Pesqueiro marcado na publicação (opcional). */
+  pesqueiro?: Pesqueiro;
   status?: CatchStatus;
   curtidas: number;
   comentarios: number;

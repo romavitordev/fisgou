@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   const me = await getCurrentDbUser();
   if (!me) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
-  const { legenda, localPrivacidade, speciesId, imagemUrl } = await req
+  const { legenda, localPrivacidade, speciesId, pesqueiroId, imagemUrl } = await req
     .json()
     .catch(() => ({}));
 
@@ -35,6 +35,7 @@ export async function POST(req: Request) {
       imagemUrl: imagemUrl ?? null,
       localPrivacidade: localPrivacidade ?? "aproximado",
       speciesId: speciesId ?? null,
+      pesqueiroId: pesqueiroId ?? null,
       // Captura com espécie entra em análise; sem espécie, sem status.
       status: speciesId ? "em_analise" : null,
     },

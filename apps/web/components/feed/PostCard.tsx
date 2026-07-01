@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MessageCircle, Share2, Plus } from "lucide-react";
+import { MessageCircle, Share2, Plus, MapPin } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { RarityDot } from "@/components/ui/RarityDot";
@@ -19,7 +19,7 @@ export function PostCard({
   onDeleted?: (id: string) => void;
   redirectOnDelete?: string;
 }) {
-  const { autor, especie, status } = post;
+  const { autor, especie, status, pesqueiro } = post;
 
   return (
     <Card className="overflow-hidden">
@@ -37,6 +37,15 @@ export function PostCard({
           <p className="truncate text-xs text-text-2">
             @{autor.handle} · {tempoRelativo(post.criadoEm)}
           </p>
+          {pesqueiro && (
+            <Link
+              href={`/pesqueiros/${pesqueiro.id}`}
+              className="mt-0.5 inline-flex max-w-full items-center gap-1 text-xs font-medium text-brand hover:underline"
+            >
+              <MapPin className="h-3 w-3 shrink-0" aria-hidden="true" />
+              <span className="truncate">{pesqueiro.nome}</span>
+            </Link>
+          )}
         </div>
         <PostMenu
           postId={post.id}
