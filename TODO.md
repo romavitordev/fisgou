@@ -46,7 +46,9 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 8. **Mensagens** real (a tela é stub).
 9. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
 10. **Painel de vendedor** (usar o `role="vendedor"` já salvo para liberar telas/recursos).
-11. **Favicon do site** — usar o **mesmo ícone de peixe** já usado no site (o do `FishLoader`/marca), só que na **cor teal green da marca** (`#14916B` claro / `#2DB98B` escuro — ver `lib/accent.ts`, paleta `teal`). Gerar `favicon.ico` + `icon.svg`/PNGs (via `app/icon.svg` do App Router) e apple-touch-icon.
+
+### Feito ✅ (favicon)
+- **Favicon do site** — `app/icon.svg`: peixe (o mesmo `Fish` do lucide/marca) preenchido em **teal green**, `#14916B` claro / `#2DB98B` escuro via `prefers-color-scheme`, com olho branco. `app/apple-icon.png` (180×180): tile da marca (quadrado teal + peixe branco). O Next injeta os `<link>` sozinho. (`.ico` legado dispensado — SVG cobre browsers modernos.)
 
 ---
 
