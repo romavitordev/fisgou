@@ -116,6 +116,8 @@ export interface Comment {
   curtidas: number;
   /** Se o usuário logado já curtiu (preenchido nas queries). */
   liked?: boolean;
+  /** Presente quando é resposta a outro comentário (só 1 nível). */
+  parentId?: string;
 }
 
 export type NotificationType =

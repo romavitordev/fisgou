@@ -99,6 +99,7 @@ export function toComment(
     criadoEm: c.criadoEm.toISOString(),
     curtidas: c.curtidas,
     liked,
+    parentId: c.parentId ?? undefined,
   };
 }
 

@@ -113,6 +113,11 @@ model Comment {
   criadoEm DateTime @default(now())
   curtidas Int      @default(0)
 
+  // Resposta a outro comentário (só 1 nível — parent sempre é um comentário raiz).
+  parentId String?
+  parent   Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("Replies")
+
   likes CommentLike[]
 }
 

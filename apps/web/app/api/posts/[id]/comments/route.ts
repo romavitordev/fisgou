@@ -10,7 +10,7 @@ export async function POST(
   const me = await getCurrentDbUser();
   if (!me) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
-  const { texto } = await req.json().catch(() => ({}));
+  const { texto, parentId } = await req.json().catch(() => ({}));
   if (!texto || !String(texto).trim()) {
     return NextResponse.json({ error: "Comentário vazio." }, { status: 400 });
   }
@@ -18,8 +18,23 @@ export async function POST(
   const post = await prisma.post.findUnique({ where: { id: params.id } });
   if (!post) return NextResponse.json({ error: "Post não encontrado." }, { status: 404 });
 
+  // Resposta: sempre pendura no comentário raiz (só 1 nível de thread).
+  let raizId: string | null = null;
+  if (parentId) {
+    const pai = await prisma.comment.findUnique({ where: { id: String(parentId) } });
+    if (!pai || pai.postId !== params.id) {
+      return NextResponse.json({ error: "Comentário original não encontrado." }, { status: 404 });
+    }
+    raizId = pai.parentId ?? pai.id;
+  }
+
   const comment = await prisma.comment.create({
-    data: { postId: params.id, autorId: me.id, texto: String(texto).trim() },
+    data: {
+      postId: params.id,
+      autorId: me.id,
+      texto: String(texto).trim(),
+      parentId: raizId,
+    },
     include: { autor: true },
   });
   await prisma.post.update({
@@ -27,11 +42,17 @@ export async function POST(
     data: { comentarios: { increment: 1 } },
   });
 
-  // Notifica o autor do post (menos quando comenta no próprio).
-  if (post.autorId !== me.id) {
+  // Notifica quem deve saber: autor do comentário-raiz (se for resposta)
+  // ou autor do post (se for um comentário novo) — nunca a si mesmo.
+  let destinatarioId = post.autorId;
+  if (raizId) {
+    const raiz = await prisma.comment.findUnique({ where: { id: raizId } });
+    if (raiz) destinatarioId = raiz.autorId;
+  }
+  if (destinatarioId !== me.id) {
     await prisma.notification.create({
       data: {
-        recipientId: post.autorId,
+        recipientId: destinatarioId,
         tipo: "comentario",
         actorId: me.id,
         postId: post.id,
