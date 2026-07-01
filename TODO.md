@@ -46,6 +46,7 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 8. **Mensagens** real (a tela é stub).
 9. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
 10. **Painel de vendedor** (usar o `role="vendedor"` já salvo para liberar telas/recursos).
+11. **Favicon do site** — usar o **mesmo ícone de peixe** já usado no site (o do `FishLoader`/marca), só que na **cor teal green da marca** (`#14916B` claro / `#2DB98B` escuro — ver `lib/accent.ts`, paleta `teal`). Gerar `favicon.ico` + `icon.svg`/PNGs (via `app/icon.svg` do App Router) e apple-touch-icon.
 
 ---
 
