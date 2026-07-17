@@ -7,7 +7,9 @@
  * reservado a lendário/Criador/Recordista.
  */
 export const ACCENTS = {
-  teal: { nome: "Teal", light: "#14916B", dark: "#2DB98B" },
+  // Chave "teal" mantida por compatibilidade (accent salvo nos usuários),
+  // mas agora carrega a identidade oficial Fisgou (oliva/creme).
+  teal: { nome: "Fisgou", light: "#395429", dark: "#E1CEAD" },
   oceano: { nome: "Oceano", light: "#2D7DD2", dark: "#4F9FE0" },
   ametista: { nome: "Ametista", light: "#7C5CD6", dark: "#9B82E0" },
   coral: { nome: "Coral", light: "#E0556E", dark: "#F07A90" },

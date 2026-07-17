@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 import { ThemeProvider } from "@/lib/theme-provider";
 import { AuthProvider } from "@/lib/auth";
 import "./globals.css";
 
-const inter = Inter({
+// Manrope é a fonte da identidade Fisgou (site/app oficial).
+const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
@@ -18,8 +19,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FBFAF6" },
-    { media: "(prefers-color-scheme: dark)", color: "#0F1412" },
+    { media: "(prefers-color-scheme: light)", color: "#FBFAF3" },
+    { media: "(prefers-color-scheme: dark)", color: "#101913" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -32,7 +33,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans`}>
+      <body className={`${manrope.variable} font-sans`}>
         <ThemeProvider>
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>

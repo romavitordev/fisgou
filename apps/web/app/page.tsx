@@ -68,7 +68,7 @@ export default function LandingPage() {
           <ScrollReveal>
             <span className="inline-flex items-center gap-2 rounded-full border border-brand/20 bg-brand-soft px-3 py-1 text-sm font-medium text-brand">
               <Fish className="h-4 w-4" aria-hidden="true" />
-              A comunidade dos pescadores
+              A pesca não acaba quando o peixe sai d&rsquo;água.
             </span>
           </ScrollReveal>
 
