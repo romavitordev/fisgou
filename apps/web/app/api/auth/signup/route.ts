@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { createSession } from "@/lib/session";
 import { toUser } from "@/lib/dto";
+import { verificarRateLimit, ipDaRequisicao } from "@/lib/ratelimit";
 
 const CORES = ["#14916B", "#2D7DD2", "#7C5CD6", "#E0A11A", "#2DB98B", "#D2691E"];
 
@@ -22,6 +23,17 @@ async function handleUnico(base: string) {
 }
 
 export async function POST(req: Request) {
+  // Criação de conta em massa: 5 cadastros por IP / 15 min.
+  const ip = ipDaRequisicao(req);
+  const limite = verificarRateLimit("signup", ip);
+  if (!limite.permitido) {
+    const minutos = Math.max(1, Math.ceil(limite.liberaEmSegundos / 60));
+    return NextResponse.json(
+      { error: `Muitas tentativas. Tente novamente em ${minutos} minuto(s).` },
+      { status: 429 },
+    );
+  }
+
   const { nome, email, senha, role, nomeNegocio } = await req.json().catch(() => ({}));
 
   if (!nome || String(nome).trim().length < 2) {
