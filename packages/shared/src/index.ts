@@ -31,6 +31,9 @@ export type BadgeTier = "normal" | "lendario";
  */
 export type UserRole = "pescador" | "vendedor" | "moderador";
 
+/** Quem pode me enviar mensagens ("amigos" = seguimento mútuo). */
+export type DmPrivacy = "todos" | "amigos";
+
 // ── Entidades ───────────────────────────────────────────────────────
 
 /**
@@ -70,6 +73,8 @@ export interface User {
   role?: UserRole;
   /** Nome do negócio (só p/ role "vendedor"). */
   nomeNegocio?: string;
+  /** Quem pode me enviar mensagens (default "todos"). */
+  dmPrivacy?: DmPrivacy;
   stats: UserStats;
 }
 

@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 import type { User } from "@fisgou/shared";
 
 /** Abre a conversa no dock (desktop) ou na página /mensagens (mobile). */
-function useOpenConv() {
+export function useOpenConv() {
   const { openConversation } = useChat();
   const router = useRouter();
   return useCallback(

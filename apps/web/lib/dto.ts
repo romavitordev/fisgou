@@ -52,6 +52,7 @@ export function toUser(u: PrismaUser): User {
     criador: u.criador,
     role: (u.role as UserRole | undefined) ?? "pescador",
     nomeNegocio: u.nomeNegocio ?? undefined,
+    dmPrivacy: (u.dmPrivacy as User["dmPrivacy"]) ?? "todos",
     stats: {
       peixes: u.peixes,
       especies: u.especies,

@@ -32,6 +32,7 @@ model User {
   criador      Boolean  @default(false)
   role         String   @default("pescador") // "pescador" | "vendedor" | "moderador"
   nomeNegocio  String?  // só p/ vendedor
+  dmPrivacy    String   @default("todos") // quem pode me enviar mensagens: "todos" | "amigos"
 
   // Stats exibidos (denormalizados; mantêm os números do mock e são
   // ajustados nas mutações). Ver UserStats em @fisgou/shared.

@@ -14,6 +14,7 @@ import {
   UserPlus,
   UserCheck,
   MessageCircle,
+  Loader2,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
@@ -23,6 +24,7 @@ import { BadgeRow } from "@/components/perfil/BadgeRow";
 import { SpeciesCard } from "@/components/fisgados/SpeciesCard";
 import { LockedSpeciesCard } from "@/components/fisgados/LockedSpeciesCard";
 import { PostCard } from "@/components/feed/PostCard";
+import { useOpenConv } from "@/components/chat/StartChatButtons";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth";
 import type {
@@ -66,11 +68,14 @@ export function ProfileView({
 }: ProfileData) {
   const router = useRouter();
   const { logout } = useAuth();
+  const abrirConversa = useOpenConv();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [tab, setTab] = useState<Tab>("publicacoes");
   const [menuAberto, setMenuAberto] = useState(false);
   const [seguindo, setSeguindo] = useState(isFollowing);
   const [pendente, setPendente] = useState(false);
+  const [dmPendente, setDmPendente] = useState(false);
+  const [dmErro, setDmErro] = useState<string | null>(null);
   const [postsState, setPostsState] = useState(posts);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [removingAvatar, setRemovingAvatar] = useState(false);
@@ -79,6 +84,27 @@ export function ProfileView({
   async function sair() {
     await logout();
     router.replace("/");
+  }
+
+  /** Botão "Mensagem" (C3): abre/cria a DM respeitando a privacidade do alvo. */
+  async function abrirDM() {
+    if (dmPendente) return;
+    setDmPendente(true);
+    setDmErro(null);
+    try {
+      const r = await fetch("/api/conversations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d?.error ?? "Não foi possível abrir a conversa.");
+      abrirConversa(d.id as string);
+    } catch (e) {
+      setDmErro(e instanceof Error ? e.message : "Não foi possível abrir a conversa.");
+    } finally {
+      setDmPendente(false);
+    }
   }
 
   async function toggleSeguir() {
@@ -298,12 +324,26 @@ export function ProfileView({
                   </>
                 )}
               </Button>
-              <Button variant="secondary" aria-label="Mensagem">
-                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+              <Button
+                variant="secondary"
+                aria-label="Mensagem"
+                onClick={abrirDM}
+                disabled={dmPendente}
+              >
+                {dmPendente ? (
+                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                )}
               </Button>
             </>
           )}
         </div>
+        {dmErro && (
+          <p role="alert" className="px-4 pt-2 text-sm text-red-600 dark:text-red-400">
+            {dmErro}
+          </p>
+        )}
 
         <div
           role="tablist"

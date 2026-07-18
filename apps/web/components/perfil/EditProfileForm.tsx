@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/lib/auth";
 import { cn } from "@/lib/cn";
 import { ACCENTS, ACCENT_KEYS, DEFAULT_ACCENT, type AccentKey } from "@/lib/accent";
-import type { User } from "@fisgou/shared";
+import type { User, DmPrivacy } from "@fisgou/shared";
 
 async function uploadFile(file: File): Promise<string> {
   const fd = new FormData();
@@ -36,6 +36,7 @@ export function EditProfileForm({ user }: { user: User }) {
     (user.accent as AccentKey) ?? DEFAULT_ACCENT,
   );
   const [criador, setCriador] = useState(!!user.criador);
+  const [dmPrivacy, setDmPrivacy] = useState<DmPrivacy>(user.dmPrivacy ?? "todos");
   const [imagemUrl, setImagemUrl] = useState<string | null>(user.imagemUrl ?? null);
   const [bannerUrl, setBannerUrl] = useState<string | null>(user.bannerUrl ?? null);
 
@@ -83,6 +84,7 @@ export function EditProfileForm({ user }: { user: User }) {
           criador,
           imagemUrl,
           bannerUrl,
+          dmPrivacy,
         }),
       });
       if (!res.ok) {
@@ -217,6 +219,42 @@ export function EditProfileForm({ user }: { user: User }) {
             placeholder="Cidade, UF"
           />
         </Campo>
+
+        {/* Privacidade de DM (C3) */}
+        <div>
+          <p className="mb-2 text-sm font-medium">Quem pode me enviar mensagens</p>
+          <div className="flex gap-2" role="radiogroup" aria-label="Quem pode me enviar mensagens">
+            {(
+              [
+                { id: "todos", label: "Todos" },
+                { id: "amigos", label: "Apenas amigos" },
+              ] as const
+            ).map((op) => {
+              const ativo = dmPrivacy === op.id;
+              return (
+                <button
+                  key={op.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={ativo}
+                  onClick={() => setDmPrivacy(op.id)}
+                  className={cn(
+                    "flex-1 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors",
+                    ativo
+                      ? "border-brand bg-brand-soft text-brand"
+                      : "border-border bg-surface text-text-2 hover:bg-surface-2",
+                  )}
+                >
+                  {op.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-2 text-xs text-text-2">
+            "Apenas amigos" = só quem você segue e também te segue pode puxar
+            conversa. Conversas já existentes continuam abertas.
+          </p>
+        </div>
 
         {/* Cor de destaque */}
         <div>

@@ -110,6 +110,34 @@ export async function POST(req: Request) {
   if (!alvo)
     return NextResponse.json({ error: "Usuário não encontrado." }, { status: 404 });
 
+  // Privacidade de DM (C3): "amigos" exige seguimento mútuo — a menos que
+  // a conversa já exista (aí só reabre, sem criar nada novo).
+  if (alvo.dmPrivacy === "amigos") {
+    const [euSigo, eleMeSegue, existente] = await Promise.all([
+      prisma.follow.findUnique({
+        where: { followerId_followingId: { followerId: me.id, followingId: alvo.id } },
+      }),
+      prisma.follow.findUnique({
+        where: { followerId_followingId: { followerId: alvo.id, followingId: me.id } },
+      }),
+      prisma.conversation.findFirst({
+        where: {
+          tipo: "dm",
+          AND: [
+            { members: { some: { userId: me.id } } },
+            { members: { some: { userId: alvo.id } } },
+          ],
+        },
+        select: { id: true },
+      }),
+    ]);
+    if (!existente && !(euSigo && eleMeSegue))
+      return NextResponse.json(
+        { error: `${alvo.nome} só recebe mensagens de amigos.` },
+        { status: 403 },
+      );
+  }
+
   const id = await findOrCreateDM(me.id, otherId);
   return NextResponse.json({ id }, { status: 201 });
 }

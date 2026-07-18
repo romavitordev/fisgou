@@ -30,6 +30,14 @@ export async function PATCH(req: Request) {
   if (typeof body.bio === "string") data.bio = body.bio.trim() || null;
   if (typeof body.cidade === "string") data.cidade = body.cidade.trim() || null;
 
+  // Privacidade de DM: quem pode me enviar mensagens.
+  if ("dmPrivacy" in body) {
+    if (body.dmPrivacy === "todos" || body.dmPrivacy === "amigos")
+      data.dmPrivacy = body.dmPrivacy;
+    else
+      return NextResponse.json({ error: "Privacidade inválida." }, { status: 400 });
+  }
+
   if ("accent" in body) {
     if (body.accent === null) data.accent = null;
     else if (isAccentKey(body.accent)) data.accent = body.accent;
