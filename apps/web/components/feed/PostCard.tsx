@@ -110,9 +110,10 @@ export function PostCard({
         </div>
       )}
 
-      {/* Legenda + amigos marcados */}
+      {/* Legenda + amigos marcados. Em post-enquete a legenda É a pergunta,
+          que já aparece acima das opções — não repete aqui. */}
       <div className="space-y-1.5 px-3 py-3">
-        <p className="text-sm leading-relaxed">{post.legenda}</p>
+        {!poll && <p className="text-sm leading-relaxed">{post.legenda}</p>}
         {marcados && marcados.length > 0 && (
           <p className="flex flex-wrap items-center gap-x-1 text-xs text-text-2">
             <Users className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />

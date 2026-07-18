@@ -40,7 +40,10 @@ export function MensagensView({
   }, [carregar]);
 
   return (
-    <div className="flex h-full">
+    // `absolute inset-0` ancora a tela na viewport do <main> (relative):
+    // cabeçalho da conversa e campo de digitação ficam FIXOS, só a lista
+    // de mensagens rola, e a coluna de contatos preenche a altura toda.
+    <div className="absolute inset-0 flex">
       {/* Lista */}
       <aside
         className={cn(

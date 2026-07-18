@@ -26,4 +26,4 @@ console.log(`Iniciando modo ${mode}...`);
 
 await run(pnpm, ["exec", "prisma", "db", "push", "--force-reset"]);
 await run(pnpm, ["exec", "tsx", "prisma/seed.ts", mode]);
-await run(pnpm, ["dev"]);
+await run(pnpm, ["exec", "next", "dev", "-H", "0.0.0.0"]);

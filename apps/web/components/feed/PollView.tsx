@@ -54,6 +54,8 @@ export function PollView({ poll: inicial }: { poll: Poll }) {
 
   return (
     <div className="space-y-2 px-3 pt-3" role="group" aria-label="Enquete">
+      {/* Pergunta SEMPRE acima das opções. */}
+      <p className="text-sm font-semibold leading-snug">{poll.pergunta}</p>
       {poll.options.map((o) => {
         const pct =
           poll.totalVotos > 0 ? Math.round((o.votos / poll.totalVotos) * 100) : 0;

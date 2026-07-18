@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -57,6 +57,16 @@ export default function CriarPage() {
   // Tipo do conteúdo: foto (padrão) ou enquete (2–4 opções).
   const [modo, setModo] = useState<"foto" | "enquete">("foto");
   const [opcoes, setOpcoes] = useState<string[]>(["", ""]);
+
+  // Deep-link dos atalhos do feed (/criar?abrir=foto|especie|local):
+  // abre direto o passo correspondente. window.location evita o
+  // requisito de <Suspense> do useSearchParams.
+  useEffect(() => {
+    const abrir = new URLSearchParams(window.location.search).get("abrir");
+    if (abrir === "especie") setMostrarPicker(true);
+    else if (abrir === "local") setMostrarPesqueiroPicker(true);
+    else if (abrir === "foto") fileRef.current?.click();
+  }, []);
 
   function escolherFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
