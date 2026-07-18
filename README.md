@@ -1,33 +1,45 @@
 # Fisgou
 
-Aplicação web de comunidade para pescadores, com feed, posts, curtidas, comentários, perfil, coleção de espécies, pesqueiros e notificações.
+Aplicação web de comunidade para pescadores: feed social, coleção gamificada de espécies ("Fisgados"), pesqueiros com mapa e check-in, chat e painel para donos de pesqueiro.
 
 ## Status atual
 
-O projeto está rodando como um monorepo pnpm com:
+Monorepo pnpm, full-stack em um único app Next.js:
 
-- Frontend em Next.js 14 + React + TypeScript
-- Estilização com Tailwind CSS
-- Banco local SQLite via Prisma para desenvolvimento
-- API integrada no próprio app web por rotas de Next.js, em vez de um backend separado
-- Pacote compartilhado em packages/shared para tipos e contratos
+- Frontend: Next.js 14 (App Router) + React + TypeScript + Tailwind CSS
+- Backend: Route Handlers do próprio Next + Prisma
+- Banco: SQLite local em dev (migração p/ Postgres planejada)
+- Tipos compartilhados em `packages/shared`
+- Auth real: e-mail+senha (bcrypt) com sessão JWT em cookie httpOnly
 
 ## Estrutura do repositório
 
-- apps/web: aplicação principal em Next.js
-- apps/api: pasta reservada para uma futura API separada; no momento ainda não é o backend ativo
-- packages/shared: tipos e contratos compartilhados
+- `apps/web` — aplicação principal (front + API)
+- `apps/api` — reservado para um futuro backend separado (não ativo)
+- `packages/shared` — tipos e contratos compartilhados
 
 ## Funcionalidades atuais
 
-- Autenticação e cadastro
-- Feed de posts
-- Criação de posts com legenda, imagem e espécies
-- Curtidas, comentários e marcações
-- Enquetes em posts
-- Catálogo de espécies e coleção “Fisgados”
-- Perfil, seguidores e notificações
-- Tela de pesqueiros com placeholder e integração futura para mapas
+**Social**
+- Cadastro com papéis (Pescador / Vendedor), login, sessão
+- Feed com posts (foto real ou cor, espécie, pesqueiro, amigos marcados, enquetes com voto)
+- Curtidas, comentários com respostas (1 nível) e curtidas em comentários
+- Perfil editável (avatar, banner, bio, cor de destaque, virar criador) + perfil público
+- Seguir/deixar de seguir; notificações por ação (toast + badge, polling)
+- Busca com filtros (pescadores / espécies / pesqueiros)
+
+**Pesca**
+- Coleção "Fisgados" com raridade e selo de verificação
+- Pesqueiros: lista com filtro de cidade e **"perto de mim"** (geolocalização + raio em km), página com mapa (Google Maps opcional), check-in real
+- **Verificação de captura**: captura com espécie entra "em análise" e é aprovada/recusada (hoje pelo dono do pesqueiro; vai migrar para **moderadores da plataforma** — ver TODO rodada 2)
+
+**Chat**
+- Mensagens completas: DM, grupos e conversa com pesqueiro
+- Página `/mensagens` (lista + thread) e **ChatDock flutuante** no desktop (estilo Instagram)
+- "Falar com Pesqueiro" e "Combinar Pescaria" (grupo com evento: data + local)
+
+**Painéis**
+- Painel do vendedor (`/painel`): cadastrar/editar pesqueiros, estatísticas (check-ins, visitantes, publicações) e atividade recente
 
 ## Requisitos
 
@@ -36,64 +48,54 @@ O projeto está rodando como um monorepo pnpm com:
 
 ## Como rodar localmente
 
-Na raiz do projeto:
-
 ```powershell
 cd e:\fisgou-main
 pnpm install
 copy apps\web\.env.example apps\web\.env
 ```
 
-### Inicialização padrão
-
-```powershell
-pnpm --filter @fisgou/web db:reset
-pnpm dev
-```
-
 ### Inicialização com scripts personalizados
 
 ```powershell
-pnpm run up         # inicia o app sem posts de exemplo
-pnpm run up:empty   # inicia o app sem posts de exemplo
-pnpm run up:demo    # inicia o app com posts de exemplo
+pnpm run up         # app com banco limpo (login rápido)
+pnpm run up:empty   # idem
+pnpm run up:demo    # app com conteúdo de exemplo
 ```
 
-No modo `empty`, é criado um login rápido:
+Logins:
 
-- Email: `admin@gmail.com`
-- Senha: `admin123`
+- Modo `empty`: `admin@gmail.com` / `admin123`
+- Modo `demo`: `marina.pesca@fisgou.app` / `fisgou123` (todos os usuários do demo usam `fisgou123`)
 
-Depois, abra:
+Depois, abra http://localhost:3000 (ou a porta que o Next indicar).
 
-- http://localhost:3001
+### Teste em LAN (com o sócio)
+
+O servidor dev do Next expõe a URL "Network". Libere a porta no firewall do Windows e acesse pelo IP da máquina (ou Radmin VPN) — ex.: `http://SEU_IP:3000`.
 
 ## Variáveis de ambiente
 
-O app web usa o arquivo [apps/web/.env.example](apps/web/.env.example) como base. Os principais valores são:
+Base em [apps/web/.env.example](apps/web/.env.example):
 
-- DATABASE_URL: para o SQLite local, o padrão é `file:./dev.db`
-- AUTH_SECRET: segredo para assinar sessões JWT
-- NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: opcional para futuras integrações de mapa
+- `DATABASE_URL` — SQLite local: `file:./dev.db`
+- `AUTH_SECRET` — segredo da sessão JWT
+- `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` — opcional (mapa real dos pesqueiros)
 
 ## Banco de dados
 
-Para popular/resetar o banco local:
-
 ```powershell
-pnpm --filter @fisgou/web db:reset
+pnpm --filter @fisgou/web db:reset          # reset + seed demo
+pnpm --filter @fisgou/web exec prisma studio # inspecionar o banco
 ```
 
-Para abrir o Prisma Studio:
+## Roadmap (rodada 2 — em andamento)
 
-```powershell
-pnpm --filter @fisgou/web exec prisma studio
-```
+Detalhado no [TODO.md](TODO.md). Resumo:
 
-## Fluxo de posts
+1. **Correções**: layout do chat (cabeçalho/teclado fixos, lista com altura total), pergunta da enquete acima das opções, chips redundantes do composer.
+2. **Moderação**: papel `moderador` + painel de moderação total (verificação de capturas pela equipe Fisgou, remoção de posts mal-intencionados) e fila de verificações na área de notificações.
+3. **Social**: notificação de curtida em comentário, recomendados por fama/proximidade, botão de mensagem no perfil + privacidade de DM, compartilhar (chat interno + externo).
+4. **Novas áreas (mock)**: **Reels** (vídeos curtos), **Marketplace de lojas parceiras**, **Área de membros do criador** (assinaturas estilo YouTube).
+5. **Composer novo**: multi-mídia (imagens+vídeo+enquete), menções por `@` na legenda, abrir câmera na hora.
 
-A criação e leitura de posts já funciona pelo app web, com backend em rotas Next.js em [apps/web/app/api/posts/route.ts](apps/web/app/api/posts/route.ts) e modelo Prisma em [apps/web/prisma/schema.prisma](apps/web/prisma/schema.prisma).
-
-## Observação
-
-A pasta [apps/api](apps/api) ainda não representa um backend separado ativo. O sistema atual já está operacional via Next.js e Prisma no app web.
+Não-funcionais planejados: Postgres, storage externo p/ uploads, tempo real (WebSocket), paginação, testes/CI, PWA.

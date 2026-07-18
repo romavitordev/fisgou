@@ -59,7 +59,53 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 ### Feito ✅ (verificação de captura)
 - **Verificação de captura** — o **vendedor verifica as capturas que marcaram o pesqueiro dele**. Ao publicar com espécie, a captura entra na coleção Fisgados como "em análise". `getCapturasPendentes` alimenta a seção **"Capturas para verificar"** no `/painel` (aprovar/recusar). `POST /api/posts/[id]/verificar` (só o dono do pesqueiro): **aprovar** → post + coleção "verificado" (+`especies`) e notifica; **recusar** → "nao_verificado" e notifica (novo tipo `verificacao_recusada`). Capturas sem pesqueiro (ou em pesqueiro sem dono) seguem em análise (futuro: moderação/comunidade).
 
-> **Todos os pedidos originais do TODO foram entregues.** Backlog futuro fica nos Requisitos Não-Funcionais abaixo (Postgres, storage externo, tempo real WebSocket, paginação, testes/CI, PWA).
+> **Todos os pedidos originais do TODO foram entregues.** A rodada 2 (abaixo) veio do review do usuário em 18/jul/2026, testando em LAN com o sócio.
+
+---
+
+## Rodada 2 — Pedidos (18/jul/2026) · ⬜ pendente / 🟡 parcial / ✅ feito
+
+### A. Correções imediatas (bugs/UX)
+
+- ⬜ **A1. Chat: cabeçalho e teclado fixos** — na página `/mensagens`, o cabeçalho do contato (topo) e o campo de digitação (rodapé) estão **rolando junto com as mensagens**. Devem ficar fixos na tela; só a lista de mensagens rola. Causa provável: o root da `MensagensView` usa `h-full` mas a cadeia de altura não está travada dentro do `<main>` scroller do AppShell — a coluna cresce além da viewport. Fix: ancorar a view em `absolute inset-0` (o `<main>` já é `relative`) ou travar `max-h` na cadeia.
+- ⬜ **A2. Chat: coluna de contatos com altura total** — a lista lateral de conversas deve **sempre preencher a tela inteira** (borda direita descendo até o fim), e não crescer conforme chegam mensagens. Mesmo root cause do A1.
+- ⬜ **A3. Enquete: pergunta ACIMA das opções** — hoje a pergunta (legenda) não aparece claramente antes das barras. Renderizar a pergunta no topo do bloco da enquete, opções abaixo.
+- ⬜ **A4. Composer do feed: chips redundantes** — "Foto / Espécie / Local" levam os três para a MESMA página `/criar`. Não faz sentido. Simplificar (um atalho só, ou chips que abrem `/criar` já com o respectivo picker aberto).
+
+### B. Moderação da plataforma (muda o modelo de verificação)
+
+- ⬜ **B1. Verificação é dos MODERADORES da Fisgou, não dos pesqueiros** — reverter a decisão da rodada 1: quem aprova/recusa capturas é a equipe de moderação da plataforma. Adicionar `role="moderador"` (User.role vira "pescador" | "vendedor" | "moderador"). A seção "Capturas para verificar" SAI do painel do vendedor.
+- ⬜ **B2. Painel do moderador** (`/moderacao`, guardado por role) — **moderação total**:
+  - **Verificação de capturas**: fila com TODAS as capturas em análise (não só as com pesqueiro marcado). Critérios que o moderador avalia: a foto é real? o peixe é mesmo daquela espécie? essa espécie **existe naquela região/pesqueiro**? Aprovar/recusar com o fluxo já existente (`/api/posts/[id]/verificar` passa a exigir moderador).
+  - **Posts mal-intencionados**: listar publicações recentes com ação de **remover** (e futuramente denúncias dos usuários alimentando essa fila).
+  - (futuro) suspender usuário, remover comentário, log de ações.
+- ⬜ **B3. Verificações pendentes na área de notificações** — para o moderador, o acesso à fila também aparece na área de **Notificações** (ex.: aba/bloco "Verificações pendentes" no topo de `/notificacoes`), não escondido num painel.
+
+### C. Social / notificações / perfil
+
+- ⬜ **C1. Curtida em comentário notifica** — curtir um comentário gera notificação para o **dono do comentário**; se for curtida numa **resposta**, notifica apenas o **dono da resposta** (não o dono do comentário-raiz). Novo tipo `curtida_comentario`.
+- ⬜ **C2. Pescadores recomendados relevantes** — o card "Pescadores para seguir" (RightRail) deve sugerir os **mais famosos** (mais seguidores) ou os **mais próximos** (mesma cidade do viewer), não uma lista arbitrária. Hoje ordena por `seguidores desc` mas sem considerar cidade e sem excluir quem já sigo.
+- ⬜ **C3. Botão "Mensagem" no perfil público funcional** — no perfil de outro usuário, o botão de mensagem abre/cria a DM (dock no desktop, `/mensagens?c=` no mobile). Junto: **privacidade** — nova opção no perfil "Quem pode me enviar mensagens: **Todos / Apenas amigos**" (`User.dmPrivacy`; "amigos" = seguimento mútuo). A API de criar DM respeita a preferência do destinatário.
+- ⬜ **C4. Compartilhar funcional** — o botão de compartilhar do post deve (a) **enviar para um chat da Fisgou** (picker de conversas → manda o link/preview) e (b) **compartilhar fora** (Web Share API `navigator.share` no mobile; copiar link no desktop).
+
+### D. Criação de conteúdo (composer novo)
+
+- ⬜ **D1. Multi-mídia no post** — publicar **várias imagens**, **vídeo**, ou **imagens + vídeo juntos** (carrossel). Combinações com enquete: **Imagem + Enquete abaixo** e **Vídeo + Enquete abaixo** (hoje enquete exclui foto). Modelo: `PostMedia` (postId, tipo imagem|video, url, ordem) substituindo o `imagemUrl` único.
+- ⬜ **D2. Marcar amigos via "@" na legenda** — **remover o botão "Marcar amigos"**; a marcação passa a ser por **menção `@handle` digitada na legenda** (autocomplete de quem você segue enquanto digita). A menção vira link no post e notifica o marcado (mantém `PostTag`/notificação `marcacao` por trás).
+- ⬜ **D3. Abrir câmera na publicação** — opção de **tirar a foto na hora** (além de escolher da galeria) tanto no post normal quanto no vídeo curto. Mobile: `<input capture="environment">`; desktop: `getUserMedia` com preview e captura em canvas.
+
+### E. Novas áreas (mock primeiro, estruturar só o necessário)
+
+- ⬜ **E1. Vídeos curtos (Reels)** — área estilo TikTok/Reels onde ficam os vídeos curtos publicados pelos usuários: rota `/reels`, player vertical em tela cheia, navegação por scroll/swipe (um vídeo por vez), ações de curtir/comentar/compartilhar na lateral, avatar + @handle + legenda sobrepostos. Entrada na navegação. Publicação de vídeo curto no fluxo de criação. Mock: vídeos de exemplo locais/placeholder.
+- ⬜ **E2. Marketplace de lojas parceiras (mock)** — rota `/lojas`: vitrine de lojas parceiras (logo, nome, categoria — iscas, varas, equipamentos…) e produtos em destaque com preço; página da loja com catálogo simples. Sem checkout — botão "Falar com a loja" cai no chat (conversa tipo pesqueiro/loja) ou link externo. Dados mock em `data/`.
+- ⬜ **E3. Área de membros do criador (mock, estilo YouTube)** — criadores de conteúdo podem ter **assinaturas pagas**. No perfil do criador, botão "Seja membro" abre um **popup/modal em frente ao site** com: **vídeo de apresentação + precificação + os diferentes níveis de assinatura criados pelo criador** (nome, preço/mês, benefícios, selos de fidelidade). Gerenciamento: o criador cria/edita seus planos (página/aba "Membros" — mock, sem pagamento real). Referência visual: modal de membership do YouTube.
+
+### Ordem sugerida da rodada 2
+1. **A1–A4** (bugs rápidos, alto incômodo).
+2. **B1–B3** (moderação — muda modelo de verificação; pré-requisito pro resto fazer sentido).
+3. **C1–C4** (social: notificação de curtida em comentário, recomendados, DM do perfil + privacidade, compartilhar).
+4. **E1** Reels (área nova de maior impacto) → **E2** Marketplace → **E3** Membros.
+5. **D1–D3** (composer multi-mídia + @menções + câmera — maior esforço de UI).
 
 ### Feito ✅ (favicon)
 - **Favicon do site** — `app/icon.svg`: peixe (o mesmo `Fish` do lucide/marca) preenchido em **teal green**, `#14916B` claro / `#2DB98B` escuro via `prefers-color-scheme`, com olho branco. `app/apple-icon.png` (180×180): tile da marca (quadrado teal + peixe branco). O Next injeta os `<link>` sozinho. (`.ico` legado dispensado — SVG cobre browsers modernos.)
