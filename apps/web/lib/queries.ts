@@ -302,41 +302,58 @@ export async function getNotifications(userId: string) {
 
 // ── Right rail (desktop) ────────────────────────────────────────────
 export async function getRailData(viewerId: string | null = null) {
+  // Recomendados relevantes (C2): os MAIS PRÓXIMOS (mesma cidade do
+  // viewer) primeiro e, dentro de cada grupo, os MAIS FAMOSOS (mais
+  // seguidores/amigos). Nunca sugere quem o viewer já segue.
+  const [viewer, jaSigo] = viewerId
+    ? await Promise.all([
+        prisma.user.findUnique({
+          where: { id: viewerId },
+          select: { cidade: true },
+        }),
+        prisma.follow.findMany({
+          where: { followerId: viewerId },
+          select: { followingId: true },
+        }),
+      ])
+    : [null, [] as { followingId: string }[]];
+
   const [emAlta, candidatos] = await Promise.all([
     prisma.species.findMany({
       where: { raridade: { in: ["raro", "lendario"] } },
       take: 4,
       orderBy: { nome: "asc" },
     }),
-    // Sugere outros usuários (exclui o próprio viewer).
     prisma.user.findMany({
-      where: viewerId ? { id: { not: viewerId } } : undefined,
-      take: 4,
-      orderBy: { seguidores: "desc" },
+      where: viewerId
+        ? { id: { notIn: [viewerId, ...jaSigo.map((f) => f.followingId)] } }
+        : undefined,
+      // Fama = seguidores (criadores) e amigos (usuários comuns); nulls
+      // por último pra não flutuarem no desc do SQLite.
+      orderBy: [
+        { seguidores: { sort: "desc", nulls: "last" } },
+        { amigos: { sort: "desc", nulls: "last" } },
+      ],
+      take: 12,
     }),
   ]);
 
-  // Quais desses o viewer já segue.
-  const seguindo = viewerId
-    ? new Set(
-        (
-          await prisma.follow.findMany({
-            where: {
-              followerId: viewerId,
-              followingId: { in: candidatos.map((u) => u.id) },
-            },
-            select: { followingId: true },
-          })
-        ).map((f) => f.followingId),
+  // Mesma cidade sobe pro topo (sort estável preserva a ordem de fama).
+  const cidade = viewer?.cidade?.trim().toLowerCase();
+  const ranqueados = cidade
+    ? [...candidatos].sort(
+        (a, b) =>
+          Number((b.cidade ?? "").trim().toLowerCase() === cidade) -
+          Number((a.cidade ?? "").trim().toLowerCase() === cidade),
       )
-    : new Set<string>();
+    : candidatos;
 
   return {
     emAlta: emAlta.map(toSpecies),
-    pescadores: candidatos.map((u) => ({
-      user: toUser(u),
-      isFollowing: seguindo.has(u.id),
-    })),
+    // Quem já é seguido foi excluído da query — isFollowing sempre false.
+    pescadores: ranqueados
+      .slice(0, 4)
+      .map((u) => ({ user: toUser(u), isFollowing: false })),
   };
 }
 

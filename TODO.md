@@ -118,7 +118,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 
 ### C. Social e notificações
 - ✅ C1. Curtida em comentário gera notificação — tipo `curtida_comentario`; notifica o dono do comentário curtido (numa resposta, o dono da resposta — nunca o dono do raiz); não notifica a si mesmo; descurtir remove a notificação. Toast + página de notificações renderizam ("X curtiu seu comentário.").
-- ⬜ C2. Recomendação de pescadores por relevância — os mais famosos (mais seguidores) ou mais próximos (mesma cidade), excluindo quem o viewer já segue.
+- ✅ C2. Recomendação de pescadores por relevância — "Pescadores para seguir" agora exclui quem o viewer já segue, ordena por fama (seguidores/amigos, nulls por último) e sobe quem é da MESMA CIDADE do viewer pro topo. Verificado: seguir alguém remove da lista; usuário da mesma cidade passa na frente dos famosos.
 - ⬜ C3. Mensagem no perfil público + privacidade de DM ("Quem pode me enviar mensagens: Todos / Apenas amigos")
 - ⬜ C4. Compartilhar para chat interno e para fora
 - 🟡 C5. Convite de "Combinar Pescaria" para o grupo de amigos — a base já existe (modal seleciona amigos + data/hora + pesqueiro → cria grupo com card do evento; ex.: 5 amigos, sábado 15:00, Pesqueiro do Zé). Falta: os convidados serem **notificados** do convite (hoje o grupo só aparece na lista de mensagens, sem aviso) e **RSVP** no card do evento (Vou / Não vou, com contagem de confirmados).
