@@ -149,6 +149,7 @@ export interface Comment {
 
 export type NotificationType =
   | "curtida"
+  | "curtida_comentario"
   | "comentario"
   | "seguidor"
   | "verificacao"

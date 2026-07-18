@@ -117,7 +117,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - ⬜ B4. Interface de moderação avançada com busca, filtros e logs
 
 ### C. Social e notificações
-- ⬜ C1. Curtida em comentário gera notificação — notifica o dono do comentário curtido; se a curtida for numa resposta, notifica apenas o dono da resposta (não o dono do comentário-raiz). Descurtir remove a notificação (padrão das demais).
+- ✅ C1. Curtida em comentário gera notificação — tipo `curtida_comentario`; notifica o dono do comentário curtido (numa resposta, o dono da resposta — nunca o dono do raiz); não notifica a si mesmo; descurtir remove a notificação. Toast + página de notificações renderizam ("X curtiu seu comentário.").
 - ⬜ C2. Recomendação de pescadores por relevância — os mais famosos (mais seguidores) ou mais próximos (mesma cidade), excluindo quem o viewer já segue.
 - ⬜ C3. Mensagem no perfil público + privacidade de DM ("Quem pode me enviar mensagens: Todos / Apenas amigos")
 - ⬜ C4. Compartilhar para chat interno e para fora

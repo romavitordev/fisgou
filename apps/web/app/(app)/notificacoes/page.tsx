@@ -26,6 +26,7 @@ export const dynamic = "force-dynamic";
 
 const iconByType: Record<NotificationType, typeof Heart> = {
   curtida: Heart,
+  curtida_comentario: Heart,
   comentario: MessageCircle,
   seguidor: UserPlus,
   verificacao: BadgeCheck,
@@ -35,6 +36,7 @@ const iconByType: Record<NotificationType, typeof Heart> = {
 
 const colorByType: Record<NotificationType, string> = {
   curtida: "text-red-500",
+  curtida_comentario: "text-red-500",
   comentario: "text-brand",
   seguidor: "text-brand",
   verificacao: "text-brand",
@@ -47,6 +49,8 @@ function texto(n: Notification): string {
   switch (n.tipo) {
     case "curtida":
       return `${nome} curtiu sua publicação.`;
+    case "curtida_comentario":
+      return `${nome} curtiu seu comentário.`;
     case "comentario":
       return `${nome} comentou na sua publicação.`;
     case "seguidor":

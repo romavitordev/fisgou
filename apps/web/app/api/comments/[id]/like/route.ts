@@ -26,6 +26,16 @@ export async function POST(
       where: { id: params.id },
       data: { curtidas: { decrement: 1 } },
     });
+    // Descurtir remove a notificação (padrão das demais ações).
+    const notif = await prisma.notification.findFirst({
+      where: {
+        recipientId: comment.autorId,
+        tipo: "curtida_comentario",
+        actorId: me.id,
+        postId: comment.postId,
+      },
+    });
+    if (notif) await prisma.notification.delete({ where: { id: notif.id } });
     liked = false;
   } else {
     await prisma.commentLike.create({
@@ -35,6 +45,18 @@ export async function POST(
       where: { id: params.id },
       data: { curtidas: { increment: 1 } },
     });
+    // Notifica o DONO do comentário curtido (numa resposta, o autor da
+    // resposta — nunca o dono do comentário-raiz). Não notifica a si mesmo.
+    if (comment.autorId !== me.id) {
+      await prisma.notification.create({
+        data: {
+          recipientId: comment.autorId,
+          tipo: "curtida_comentario",
+          actorId: me.id,
+          postId: comment.postId,
+        },
+      });
+    }
     liked = true;
   }
 

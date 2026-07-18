@@ -39,6 +39,8 @@ function buildText(n: Notification): string {
   switch (n.tipo) {
     case "curtida":
       return `${nome} curtiu sua publicação.`;
+    case "curtida_comentario":
+      return `${nome} curtiu seu comentário.`;
     case "comentario":
       return `${nome} comentou na sua publicação.`;
     case "seguidor":
