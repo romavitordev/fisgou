@@ -14,6 +14,7 @@ import type {
   Poll as PrismaPoll,
   PollOption as PrismaPollOption,
   PollVote as PrismaPollVote,
+  Message as PrismaMessage,
 } from "@prisma/client";
 import type {
   User,
@@ -33,6 +34,7 @@ import type {
   BadgeTier,
   NotificationType,
   UserRole,
+  Message,
 } from "@fisgou/shared";
 
 export function toUser(u: PrismaUser): User {
@@ -173,6 +175,19 @@ export function toCollectionEntry(
     species: toSpecies(e.species),
     status: e.status as CatchStatus,
     capturadoEm: e.capturadoEm?.toISOString(),
+  };
+}
+
+export function toMessage(
+  m: PrismaMessage & { autor: PrismaUser },
+  viewerId: string | null = null,
+): Message {
+  return {
+    id: m.id,
+    autor: toUser(m.autor),
+    texto: m.texto,
+    criadoEm: m.criadoEm.toISOString(),
+    mine: viewerId ? m.autorId === viewerId : undefined,
   };
 }
 
