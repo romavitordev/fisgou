@@ -56,8 +56,10 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 - **"Falar com Pesqueiro"** — botão da página do pesqueiro cria/abre a conversa `tipo="pesqueiro"` (dock no desktop, `/mensagens?c=` no mobile).
 - **"Combinar Pescaria"** — botão abre modal (nome, data/hora, amigos multi-select), cria grupo com `eventoData`/`eventoPesqueiroId` + mensagem inicial; `ChatThread` mostra card "Pescaria combinada" (data + pesqueiro) no topo.
 
-### Pendentes ⬜ (pedidos)
-9. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
+### Feito ✅ (verificação de captura)
+- **Verificação de captura** — o **vendedor verifica as capturas que marcaram o pesqueiro dele**. Ao publicar com espécie, a captura entra na coleção Fisgados como "em análise". `getCapturasPendentes` alimenta a seção **"Capturas para verificar"** no `/painel` (aprovar/recusar). `POST /api/posts/[id]/verificar` (só o dono do pesqueiro): **aprovar** → post + coleção "verificado" (+`especies`) e notifica; **recusar** → "nao_verificado" e notifica (novo tipo `verificacao_recusada`). Capturas sem pesqueiro (ou em pesqueiro sem dono) seguem em análise (futuro: moderação/comunidade).
+
+> **Todos os pedidos originais do TODO foram entregues.** Backlog futuro fica nos Requisitos Não-Funcionais abaixo (Postgres, storage externo, tempo real WebSocket, paginação, testes/CI, PWA).
 
 ### Feito ✅ (favicon)
 - **Favicon do site** — `app/icon.svg`: peixe (o mesmo `Fish` do lucide/marca) preenchido em **teal green**, `#14916B` claro / `#2DB98B` escuro via `prefers-color-scheme`, com olho branco. `app/apple-icon.png` (180×180): tile da marca (quadrado teal + peixe branco). O Next injeta os `<link>` sozinho. (`.ico` legado dispensado — SVG cobre browsers modernos.)

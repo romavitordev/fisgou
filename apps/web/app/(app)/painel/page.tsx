@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PainelView } from "@/components/painel/PainelView";
-import { getViewer, getPainelData } from "@/lib/queries";
+import { getViewer, getPainelData, getCapturasPendentes } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +11,18 @@ export default async function PainelPage() {
   // Só vendedores têm painel; pescador vai pro feed.
   if (viewer.role !== "vendedor") redirect("/feed");
 
-  const pesqueiros = await getPainelData(viewer.id);
+  const [pesqueiros, capturas] = await Promise.all([
+    getPainelData(viewer.id),
+    getCapturasPendentes(viewer.id),
+  ]);
 
   return (
     <PageContainer width="wide">
-      <PainelView pesqueiros={pesqueiros} nomeNegocio={viewer.nomeNegocio} />
+      <PainelView
+        pesqueiros={pesqueiros}
+        capturasPendentes={capturas}
+        nomeNegocio={viewer.nomeNegocio}
+      />
     </PageContainer>
   );
 }
