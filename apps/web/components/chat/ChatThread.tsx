@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import Link from "next/link";
-import { ArrowLeft, Send, Loader2, CalendarClock, MapPin } from "lucide-react";
+import { ArrowLeft, Send, Loader2, CalendarClock, MapPin, X } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { cn } from "@/lib/cn";
 import { tempoRelativo } from "@/lib/format";
@@ -23,11 +23,14 @@ const POLL_MS = 5000;
 export function ChatThread({
   conversationId,
   onBack,
+  onClose,
   onActivity,
   compact = false,
 }: {
   conversationId: string;
   onBack?: () => void;
+  /** X no cabeçalho (janela do dock). */
+  onClose?: () => void;
   /** Avisa o pai que houve leitura/mudança (p/ atualizar badges/lista). */
   onActivity?: () => void;
   compact?: boolean;
@@ -186,6 +189,16 @@ export function ChatThread({
               </p>
             </div>
           </>
+        )}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar conversa"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text-2 transition-colors hover:bg-surface-2 hover:text-text"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
         )}
       </header>
 

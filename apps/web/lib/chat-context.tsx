@@ -17,15 +17,33 @@ import {
 
 const POLL_MS = 8000;
 
+const MAX_JANELAS = 3;
+
 interface ChatContextValue {
   unread: number;
   refreshUnread: () => void;
+  /** Ids das conversas abertas como janelas flutuantes (dock, desktop). */
+  openIds: string[];
+  openConversation: (id: string) => void;
+  closeConversation: (id: string) => void;
 }
 
 const ChatContext = createContext<ChatContextValue | null>(null);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
   const [unread, setUnread] = useState(0);
+  const [openIds, setOpenIds] = useState<string[]>([]);
+
+  const openConversation = useCallback((id: string) => {
+    setOpenIds((prev) => {
+      if (prev.includes(id)) return prev;
+      return [id, ...prev].slice(0, MAX_JANELAS);
+    });
+  }, []);
+
+  const closeConversation = useCallback((id: string) => {
+    setOpenIds((prev) => prev.filter((x) => x !== id));
+  }, []);
 
   const refreshUnread = useCallback(async () => {
     try {
@@ -50,7 +68,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   }, [refreshUnread]);
 
   return (
-    <ChatContext.Provider value={{ unread, refreshUnread }}>
+    <ChatContext.Provider
+      value={{ unread, refreshUnread, openIds, openConversation, closeConversation }}
+    >
       {children}
     </ChatContext.Provider>
   );

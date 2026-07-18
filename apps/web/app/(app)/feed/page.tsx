@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { Search, Bell } from "lucide-react";
+import { Search, Bell, MessageCircle } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { NotificationsBadge } from "@/components/layout/NotificationsBadge";
+import { ChatNavBadge } from "@/components/layout/ChatNavBadge";
 import { Composer } from "@/components/feed/Composer";
 import { FeedTimeline } from "@/components/feed/FeedTimeline";
 import { getFeed, getViewer } from "@/lib/queries";
@@ -24,12 +25,18 @@ export default async function FeedPage() {
             <IconButton label="Buscar" href="/buscar">
               <Search className="h-5 w-5" aria-hidden="true" />
             </IconButton>
-            {/* Entrada de notificações no mobile (no desktop fica na Sidebar). */}
+            {/* Notificações + mensagens no mobile (no desktop ficam na Sidebar). */}
             <span className="relative md:hidden">
               <IconButton label="Notificações" href="/notificacoes">
                 <Bell className="h-5 w-5" aria-hidden="true" />
               </IconButton>
               <NotificationsBadge />
+            </span>
+            <span className="relative md:hidden">
+              <IconButton label="Mensagens" href="/mensagens">
+                <MessageCircle className="h-5 w-5" aria-hidden="true" />
+              </IconButton>
+              <ChatNavBadge />
             </span>
             {/* No desktop o toggle vive na Sidebar; evita duplicar. */}
             <ThemeToggle className="md:hidden" />
