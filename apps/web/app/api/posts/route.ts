@@ -80,6 +80,24 @@ export async function POST(req: Request) {
     data: { peixes: { increment: 1 } },
   });
 
+  // Captura com espécie entra na coleção "Fisgados" como "em análise"
+  // (a menos que a espécie já esteja verificada para o usuário).
+  if (speciesId) {
+    const existente = await prisma.collectionEntry.findUnique({
+      where: { userId_speciesId: { userId: me.id, speciesId } },
+    });
+    if (!existente) {
+      await prisma.collectionEntry.create({
+        data: { userId: me.id, speciesId, status: "em_analise" },
+      });
+    } else if (existente.status === "nao_verificado") {
+      await prisma.collectionEntry.update({
+        where: { userId_speciesId: { userId: me.id, speciesId } },
+        data: { status: "em_analise" },
+      });
+    }
+  }
+
   // Marcar amigos: cria PostTag para cada id válido (≠ autor, sem repetir)
   // e notifica cada marcado.
   if (Array.isArray(amigosIds) && amigosIds.length > 0) {

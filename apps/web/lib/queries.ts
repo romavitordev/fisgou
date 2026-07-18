@@ -225,6 +225,30 @@ export async function getPainelData(userId: string) {
 
 export type PainelPesqueiro = Awaited<ReturnType<typeof getPainelData>>[number];
 
+/**
+ * Capturas aguardando verificação nos pesqueiros do vendedor: posts
+ * "em análise" com espécie que marcaram um pesqueiro que ele administra.
+ */
+export async function getCapturasPendentes(vendedorId: string) {
+  const meus = await prisma.pesqueiro.findMany({
+    where: { donoId: vendedorId },
+    select: { id: true },
+  });
+  if (meus.length === 0) return [];
+
+  const posts = await prisma.post.findMany({
+    where: {
+      status: "em_analise",
+      speciesId: { not: null },
+      pesqueiroId: { in: meus.map((p) => p.id) },
+    },
+    orderBy: { criadoEm: "desc" },
+    include: { autor: true, species: true, pesqueiro: true },
+    take: 50,
+  });
+  return posts.map((p) => toPost(p, false, vendedorId));
+}
+
 // ── Perfil ──────────────────────────────────────────────────────────
 export async function getProfile(handle: string, viewerId: string | null) {
   const u = await prisma.user.findUnique({ where: { handle } });

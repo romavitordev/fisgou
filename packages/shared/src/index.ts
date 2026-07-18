@@ -148,6 +148,7 @@ export type NotificationType =
   | "comentario"
   | "seguidor"
   | "verificacao"
+  | "verificacao_recusada"
   | "marcacao";
 
 export interface Notification {
