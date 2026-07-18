@@ -43,6 +43,9 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 ### Feito ✅ (enquetes)
 - **Enquete no post** — models `Poll`/`PollOption`/`PollVote` (1 voto por usuário, trocar de opção = upsert); no `/criar`, alternador **Foto | Enquete** (2–4 opções, legenda vira a pergunta); `PostCard` renderiza `PollView` com barras de %, voto otimista e contagem total; post-enquete sem foto dispensa o bloco de cor.
 
+### Feito ✅ (cidade + raio)
+- **Filtro de cidade + pesqueiros próximos** — `Pesqueiro.cidade` (schema/mock/seed); na tela de pesqueiros, chips de cidade (derivadas dos dados) + chip **"Perto de mim"**: geolocalização do navegador → **Haversine** com `lat/lng` recalcula a distância real, ordena do mais perto pro mais longe e filtra por **raio** (10/25/50/100 km); estados de carregando/erro de permissão.
+
 ### Pendentes ⬜ (pedidos)
 4. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
 5. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).

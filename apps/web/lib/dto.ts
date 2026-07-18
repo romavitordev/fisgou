@@ -152,6 +152,7 @@ export function toPesqueiro(p: PrismaPesqueiro): Pesqueiro {
     nota: p.nota,
     avaliacoes: p.avaliacoes,
     distanciaKm: p.distanciaKm,
+    cidade: p.cidade ?? undefined,
     endereco: p.endereco ?? undefined,
     cor: p.cor,
     lat: p.lat ?? undefined,

@@ -179,6 +179,8 @@ export interface Pesqueiro {
   nota: number;
   avaliacoes: number;
   distanciaKm: number;
+  /** Cidade (para o filtro de cidade na busca). */
+  cidade?: string;
   endereco?: string;
   /** Cor do thumb/capa placeholder. */
   cor: string;

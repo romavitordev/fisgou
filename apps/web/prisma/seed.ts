@@ -85,6 +85,7 @@ async function main() {
         nota: p.nota,
         avaliacoes: p.avaliacoes,
         distanciaKm: p.distanciaKm,
+        cidade: p.cidade ?? null,
         endereco: p.endereco,
         cor: p.cor,
         lat: p.lat ?? null,
