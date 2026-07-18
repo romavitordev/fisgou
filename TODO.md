@@ -60,7 +60,7 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 - ✅ Responsivo (mobile-first + desktop), acessibilidade básica (foco, aria), `prefers-reduced-motion`.
 - ✅ Tema claro/escuro; tokens via CSS vars.
 - 🟡 Performance: feed limitado a 50; faltam **paginação/scroll infinito**, otimização de imagens (hoje `<img>` local).
-- 🟡 Segurança: sessão httpOnly, validações nas rotas, **rate limiting no login/cadastro** (5/IP/15min, `lib/ratelimit.ts`), **CSP + security headers** em todas as rotas (`next.config.js`) e **guia de deploy seguro** (`DEPLOY.md`); faltam **CSRF** em mutações, sanitização de upload mais forte, e **storage externo** (uploads locais não servem em produção serverless).
+- 🟡 Segurança: sessão httpOnly (SameSite=Lax), validações nas rotas, **rate limiting no login/cadastro** (5/IP/15min, `lib/ratelimit.ts`), **CSP + security headers** em todas as rotas (`next.config.js`), **anti-CSRF nas mutações** (checagem de Origin no `middleware.ts`), **upload validado por magic bytes** (JPG/PNG/GIF/WebP; extensão pelo tipo detectado; SVG rejeitado) e **guia de deploy seguro** (`DEPLOY.md`); falta **storage externo** (uploads locais não servem em produção serverless).
 - ⬜ **Banco de produção**: migrar SQLite → Postgres (Docker / Neon) — trocar `provider` + `DATABASE_URL` + migrations.
 - ⬜ **Tempo real de verdade** (WebSocket/SSE) — hoje é polling 8–10s (ótimo p/ LAN, mas não sub-segundo).
 - ⬜ Testes (unit/e2e), CI, observabilidade (logs/erros).
