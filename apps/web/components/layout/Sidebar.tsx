@@ -12,6 +12,7 @@ import {
   Plus,
   LogOut,
   Store,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
@@ -19,11 +20,13 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "@/components/ui/Avatar";
 import { useAuth } from "@/lib/auth";
 import { NotificationsBadge } from "./NotificationsBadge";
+import { ChatNavBadge } from "./ChatNavBadge";
 
 const baseItems = [
   { href: "/feed", label: "Início", icon: Home },
   { href: "/buscar", label: "Buscar", icon: Search },
   { href: "/notificacoes", label: "Notificações", icon: Bell },
+  { href: "/mensagens", label: "Mensagens", icon: MessageCircle },
   { href: "/pesqueiros", label: "Pesqueiros", icon: MapPin },
   { href: "/fisgados", label: "Fisgados", icon: Fish },
   { href: "/perfil", label: "Perfil", icon: User },
@@ -48,7 +51,7 @@ export function Sidebar() {
   // Vendedores ganham a entrada "Painel" (logo após Pesqueiros).
   const items =
     user?.role === "vendedor"
-      ? [...baseItems.slice(0, 4), painelItem, ...baseItems.slice(4)]
+      ? [...baseItems.slice(0, 5), painelItem, ...baseItems.slice(5)]
       : baseItems;
 
   async function sair() {
@@ -91,9 +94,8 @@ export function Sidebar() {
               />
               <span className="hidden xl:inline">{label}</span>
 
-              {href === "/notificacoes" && (
-                <NotificationsBadge />
-              )}
+              {href === "/notificacoes" && <NotificationsBadge />}
+              {href === "/mensagens" && <ChatNavBadge />}
             </Link>
           );
         })}
