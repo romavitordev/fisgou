@@ -192,3 +192,49 @@ export interface Pesqueiro {
   /** Id do vendedor que administra o pesqueiro (se houver). */
   donoId?: string;
 }
+
+// ── Mensagens / conversas ───────────────────────────────────────────
+export type ConversationTipo = "dm" | "grupo" | "pesqueiro";
+
+export interface Message {
+  id: string;
+  autor: User;
+  texto: string;
+  criadoEm: string;
+  /** true se a mensagem é do próprio viewer. */
+  mine?: boolean;
+}
+
+/** Evento "Combinar Pescaria" anexado a uma conversa de grupo. */
+export interface CombinarEvento {
+  data: string;
+  pesqueiroId?: string;
+  pesqueiroNome?: string;
+}
+
+/** Resumo de uma conversa (lista de mensagens / dock). */
+export interface ConversationSummary {
+  id: string;
+  tipo: ConversationTipo;
+  /** DM: nome do outro; grupo: título; pesqueiro: nome do pesqueiro. */
+  titulo: string;
+  /** Avatar: cor + iniciais (ou foto). */
+  cor: string;
+  iniciais: string;
+  imagemUrl?: string;
+  /** DM: handle do outro (link do perfil). */
+  outroHandle?: string;
+  /** Conversa com estabelecimento. */
+  pesqueiroId?: string;
+  ultimaMensagem?: string;
+  ultimaEm?: string;
+  naoLidas: number;
+  membros?: number;
+  evento?: CombinarEvento;
+}
+
+/** Conversa aberta: resumo + participantes + mensagens. */
+export interface ConversationDetail extends ConversationSummary {
+  participantes: User[];
+  mensagens: Message[];
+}

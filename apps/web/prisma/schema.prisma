@@ -56,6 +56,8 @@ model User {
   taggedIn      PostTag[]
   pollVotes     PollVote[]
   pesqueiros    Pesqueiro[]    @relation("dono") // pesqueiros que este vendedor administra
+  conversas     ConversationMember[]
+  mensagens     Message[]
 }
 
 model Species {
@@ -219,6 +221,7 @@ model Pesqueiro {
 
   checkIns CheckIn[]
   posts    Post[]
+  conversas Conversation[]
 
   @@index([donoId])
 }
@@ -255,4 +258,52 @@ model Notification {
   speciesId   String?
   criadoEm    DateTime @default(now())
   lida        Boolean  @default(false)
+}
+
+// ── Mensagens / conversas ───────────────────────────────────────────
+model Conversation {
+  id       String  @id @default(cuid())
+  tipo     String  @default("dm") // "dm" | "grupo" | "pesqueiro"
+  titulo   String? // nome do grupo (só grupo)
+
+  // Conversa com um estabelecimento ("Falar com Pesqueiro").
+  pesqueiro   Pesqueiro? @relation(fields: [pesqueiroId], references: [id], onDelete: SetNull)
+  pesqueiroId String?
+
+  // "Combinar Pescaria": evento opcional (grupo) — data + pesqueiro alvo.
+  eventoData        DateTime?
+  eventoPesqueiroId String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @default(now()) @updatedAt
+
+  members  ConversationMember[]
+  messages Message[]
+
+  @@index([pesqueiroId])
+}
+
+model ConversationMember {
+  id             String       @id @default(cuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  entrouEm       DateTime     @default(now())
+  lastReadAt     DateTime? // marca de leitura (badge de não-lidas)
+
+  @@unique([conversationId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+  autor          User         @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  autorId        String
+  texto          String
+  criadoEm       DateTime     @default(now())
+
+  @@index([conversationId, criadoEm])
 }
