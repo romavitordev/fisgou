@@ -51,6 +51,9 @@ async function main() {
         bio: "Usuário administrativo de acesso rápido.",
         cor: "#2C7A7B",
         iniciais: "AD",
+        // Login rápido é MODERADOR: dá acesso ao painel /moderacao
+        // (verificação de capturas + remoção de posts).
+        role: "moderador",
         criador: false,
         peixes: 0,
         especies: 0,

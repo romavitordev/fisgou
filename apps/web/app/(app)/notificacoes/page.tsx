@@ -1,12 +1,24 @@
 import Link from "next/link";
-import { Heart, MessageCircle, UserPlus, BadgeCheck, BadgeX, Users } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  UserPlus,
+  BadgeCheck,
+  BadgeX,
+  Users,
+  ShieldCheck,
+} from "lucide-react";
 import { TopBar, TopBarTitle } from "@/components/layout/TopBar";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { redirect } from "next/navigation";
 import { Avatar } from "@/components/ui/Avatar";
 import { cn } from "@/lib/cn";
 import { tempoRelativo } from "@/lib/format";
-import { getNotifications, getViewer } from "@/lib/queries";
+import {
+  getNotifications,
+  getViewer,
+  getCapturasPendentesCount,
+} from "@/lib/queries";
 import { MarkNotificationsRead } from "@/components/layout/MarkNotificationsRead";
 import type { Notification, NotificationType } from "@fisgou/shared";
 
@@ -56,6 +68,10 @@ export default async function NotificacoesPage() {
   if (!viewer) redirect("/login");
   const notifications = await getNotifications(viewer.id);
 
+  // Moderador vê a fila de verificação também por aqui (pedido B3).
+  const pendentes =
+    viewer.role === "moderador" ? await getCapturasPendentesCount() : 0;
+
   return (
     <PageContainer>
       {/* Marca como lidas e zera o badge (client, via provider). */}
@@ -63,6 +79,34 @@ export default async function NotificacoesPage() {
       <TopBar>
         <TopBarTitle title="Notificações" />
       </TopBar>
+
+      {viewer.role === "moderador" && (
+        <Link
+          href="/moderacao"
+          className="mx-4 mt-3 flex items-center gap-3 rounded-2xl border border-border bg-brand-soft/50 px-4 py-3 transition-colors hover:bg-brand-soft"
+        >
+          <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-fg">
+            <ShieldCheck className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-sm font-semibold">
+              Verificações pendentes
+            </span>
+            <span className="block text-xs text-text-2">
+              {pendentes === 0
+                ? "Nenhuma captura aguardando."
+                : pendentes === 1
+                  ? "1 captura aguardando sua análise."
+                  : `${pendentes} capturas aguardando sua análise.`}
+            </span>
+          </span>
+          {pendentes > 0 && (
+            <span className="inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full bg-brand px-2 text-xs font-bold text-brand-fg">
+              {pendentes}
+            </span>
+          )}
+        </Link>
+      )}
 
       <ul className="divide-y divide-border">
         {notifications.map((n) => {

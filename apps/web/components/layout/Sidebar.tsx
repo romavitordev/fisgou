@@ -13,6 +13,7 @@ import {
   LogOut,
   Store,
   MessageCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
@@ -33,6 +34,11 @@ const baseItems = [
 ] as const;
 
 const painelItem = { href: "/painel", label: "Painel", icon: Store } as const;
+const moderacaoItem = {
+  href: "/moderacao",
+  label: "Moderação",
+  icon: ShieldCheck,
+} as const;
 
 function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
@@ -48,11 +54,14 @@ export function Sidebar() {
   const router = useRouter();
   const { user, logout } = useAuth();
 
-  // Vendedores ganham a entrada "Painel" (logo após Pesqueiros).
+  // Entradas extras por papel: vendedor ganha "Painel" (após Pesqueiros),
+  // moderador ganha "Moderação" (após Notificações).
   const items =
     user?.role === "vendedor"
       ? [...baseItems.slice(0, 5), painelItem, ...baseItems.slice(5)]
-      : baseItems;
+      : user?.role === "moderador"
+        ? [...baseItems.slice(0, 3), moderacaoItem, ...baseItems.slice(3)]
+        : baseItems;
 
   async function sair() {
     await logout();

@@ -24,8 +24,12 @@ export type PesqueiroTipo =
 
 export type BadgeTier = "normal" | "lendario";
 
-/** Papel escolhido no cadastro — define o fluxo/campos extras. */
-export type UserRole = "pescador" | "vendedor";
+/**
+ * Papel do usuário. "pescador"/"vendedor" são escolhidos no cadastro;
+ * "moderador" é atribuído pela equipe Fisgou (nunca via signup) e dá
+ * acesso ao painel de moderação (verificação de capturas, remoção de posts).
+ */
+export type UserRole = "pescador" | "vendedor" | "moderador";
 
 // ── Entidades ───────────────────────────────────────────────────────
 

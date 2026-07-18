@@ -30,7 +30,7 @@ model User {
   cor          String
   iniciais     String
   criador      Boolean  @default(false)
-  role         String   @default("pescador") // "pescador" | "vendedor"
+  role         String   @default("pescador") // "pescador" | "vendedor" | "moderador"
   nomeNegocio  String?  // só p/ vendedor
 
   // Stats exibidos (denormalizados; mantêm os números do mock e são

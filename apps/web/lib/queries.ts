@@ -225,28 +225,38 @@ export async function getPainelData(userId: string) {
 
 export type PainelPesqueiro = Awaited<ReturnType<typeof getPainelData>>[number];
 
+// ── Moderação (equipe Fisgou) ───────────────────────────────────────
 /**
- * Capturas aguardando verificação nos pesqueiros do vendedor: posts
- * "em análise" com espécie que marcaram um pesqueiro que ele administra.
+ * TODAS as capturas aguardando verificação (posts "em análise" com
+ * espécie), com ou sem pesqueiro marcado. Fila do painel de moderação —
+ * o moderador avalia se a foto é real, se a espécie confere e se ela
+ * existe naquela região/pesqueiro.
  */
-export async function getCapturasPendentes(vendedorId: string) {
-  const meus = await prisma.pesqueiro.findMany({
-    where: { donoId: vendedorId },
-    select: { id: true },
-  });
-  if (meus.length === 0) return [];
-
+export async function getCapturasPendentes() {
   const posts = await prisma.post.findMany({
-    where: {
-      status: "em_analise",
-      speciesId: { not: null },
-      pesqueiroId: { in: meus.map((p) => p.id) },
-    },
+    where: { status: "em_analise", speciesId: { not: null } },
     orderBy: { criadoEm: "desc" },
     include: { autor: true, species: true, pesqueiro: true },
     take: 50,
   });
-  return posts.map((p) => toPost(p, false, vendedorId));
+  return posts.map((p) => toPost(p));
+}
+
+/** Contagem da fila (bloco "Verificações pendentes" nas notificações). */
+export async function getCapturasPendentesCount() {
+  return prisma.post.count({
+    where: { status: "em_analise", speciesId: { not: null } },
+  });
+}
+
+/** Publicações recentes para triagem de conteúdo mal-intencionado. */
+export async function getPostsParaModeracao() {
+  const posts = await prisma.post.findMany({
+    orderBy: { criadoEm: "desc" },
+    include: { autor: true, species: true, pesqueiro: true },
+    take: 30,
+  });
+  return posts.map((p) => toPost(p));
 }
 
 // ── Perfil ──────────────────────────────────────────────────────────

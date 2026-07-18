@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MapPin, Fish, User, Plus, Store } from "lucide-react";
+import { Home, MapPin, Fish, User, Plus, Store, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth";
 
@@ -10,6 +10,7 @@ const inicio = { href: "/feed", label: "Início", icon: Home } as const;
 const pesqueiros = { href: "/pesqueiros", label: "Pesqueiros", icon: MapPin } as const;
 const fisgados = { href: "/fisgados", label: "FISGADOS", icon: Fish } as const;
 const painel = { href: "/painel", label: "Painel", icon: Store } as const;
+const moderacao = { href: "/moderacao", label: "Moderação", icon: ShieldCheck } as const;
 const perfil = { href: "/perfil", label: "Perfil", icon: User } as const;
 
 function isActive(pathname: string, href: string) {
@@ -24,9 +25,15 @@ export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
 
-  // 2 itens + [+] central + 2 itens. Vendedor troca "Fisgados" por "Painel".
+  // 2 itens + [+] central + 2 itens. Vendedor troca "Fisgados" por "Painel";
+  // moderador troca por "Moderação".
   const left = [inicio, pesqueiros];
-  const right = user?.role === "vendedor" ? [painel, perfil] : [fisgados, perfil];
+  const right =
+    user?.role === "vendedor"
+      ? [painel, perfil]
+      : user?.role === "moderador"
+        ? [moderacao, perfil]
+        : [fisgados, perfil];
 
   return (
     <nav

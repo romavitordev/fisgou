@@ -74,12 +74,9 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 
 ### B. Moderação da plataforma (muda o modelo de verificação)
 
-- ⬜ **B1. Verificação é dos MODERADORES da Fisgou, não dos pesqueiros** — reverter a decisão da rodada 1: quem aprova/recusa capturas é a equipe de moderação da plataforma. Adicionar `role="moderador"` (User.role vira "pescador" | "vendedor" | "moderador"). A seção "Capturas para verificar" SAI do painel do vendedor.
-- ⬜ **B2. Painel do moderador** (`/moderacao`, guardado por role) — **moderação total**:
-  - **Verificação de capturas**: fila com TODAS as capturas em análise (não só as com pesqueiro marcado). Critérios que o moderador avalia: a foto é real? o peixe é mesmo daquela espécie? essa espécie **existe naquela região/pesqueiro**? Aprovar/recusar com o fluxo já existente (`/api/posts/[id]/verificar` passa a exigir moderador).
-  - **Posts mal-intencionados**: listar publicações recentes com ação de **remover** (e futuramente denúncias dos usuários alimentando essa fila).
-  - (futuro) suspender usuário, remover comentário, log de ações.
-- ⬜ **B3. Verificações pendentes na área de notificações** — para o moderador, o acesso à fila também aparece na área de **Notificações** (ex.: aba/bloco "Verificações pendentes" no topo de `/notificacoes`), não escondido num painel.
+- ✅ **B1. Verificação é dos MODERADORES da Fisgou, não dos pesqueiros** — `role="moderador"` adicionado (nunca atribuível via signup); `/api/posts/[id]/verificar` agora exige moderador; a seção de verificação saiu do painel do vendedor; o login rápido do seed `empty` (`admin@gmail.com`) nasce moderador.
+- ✅ **B2. Painel do moderador** (`/moderacao`, guard por role) — fila **"Verificações pendentes"** com TODAS as capturas em análise (com ou sem pesqueiro; critérios no subtítulo: foto real? espécie confere/existe na região?) + **"Publicações recentes"** com remoção em 2 passos (`DELETE /api/posts/[id]` liberado p/ moderador; decrementa o contador do AUTOR). Entrada "Moderação" na Sidebar/BottomNav só p/ moderador. (futuro: suspender usuário, remover comentário, fila de denúncias, log de ações)
+- ✅ **B3. Verificações pendentes nas notificações** — bloco no topo de `/notificacoes` (só moderador) com contagem e link pro `/moderacao`.
 
 ### C. Social / notificações / perfil
 

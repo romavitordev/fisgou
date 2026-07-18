@@ -16,19 +16,15 @@ import {
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { PesqueiroForm } from "./PesqueiroForm";
-import { CapturasPendentes } from "./CapturasPendentes";
 import { pesqueiroTipoLabel } from "@/lib/rarity";
 import { formatNota, tempoRelativo } from "@/lib/format";
 import type { PainelPesqueiro } from "@/lib/queries";
-import type { Post } from "@fisgou/shared";
 
 export function PainelView({
   pesqueiros,
-  capturasPendentes = [],
   nomeNegocio,
 }: {
   pesqueiros: PainelPesqueiro[];
-  capturasPendentes?: Post[];
   nomeNegocio?: string;
 }) {
   const [criando, setCriando] = useState(false);
@@ -52,9 +48,6 @@ export function PainelView({
           Gerencie seus pesqueiros e acompanhe o movimento de quem pesca com você.
         </p>
       </header>
-
-      {/* Fila de verificação de capturas */}
-      <CapturasPendentes capturas={capturasPendentes} />
 
       {/* Estado vazio → form de cadastro do primeiro pesqueiro */}
       {vazio && !criando && (

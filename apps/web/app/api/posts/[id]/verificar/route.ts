@@ -5,8 +5,8 @@ import { getCurrentDbUser } from "@/lib/session";
 export const dynamic = "force-dynamic";
 
 /**
- * Verifica (aprova/recusa) uma captura. Só o vendedor dono do pesqueiro
- * marcado na publicação pode. Body: { aprovar: boolean }.
+ * Verifica (aprova/recusa) uma captura. Exclusivo dos MODERADORES da
+ * Fisgou (role "moderador"). Body: { aprovar: boolean }.
  * - aprovar: post → "verificado", coleção do autor → "verificado" (+especies),
  *   notifica o autor (tipo "verificacao").
  * - recusar: post → "nao_verificado", coleção volta a "nao_verificado",
@@ -18,18 +18,15 @@ export async function POST(
 ) {
   const me = await getCurrentDbUser();
   if (!me) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
-
-  const post = await prisma.post.findUnique({
-    where: { id: params.id },
-    include: { pesqueiro: true },
-  });
-  if (!post)
-    return NextResponse.json({ error: "Publicação não encontrada." }, { status: 404 });
-  if (!post.pesqueiro || post.pesqueiro.donoId !== me.id)
+  if (me.role !== "moderador")
     return NextResponse.json(
-      { error: "Você não administra o pesqueiro desta captura." },
+      { error: "Apenas moderadores verificam capturas." },
       { status: 403 },
     );
+
+  const post = await prisma.post.findUnique({ where: { id: params.id } });
+  if (!post)
+    return NextResponse.json({ error: "Publicação não encontrada." }, { status: 404 });
   if (!post.speciesId)
     return NextResponse.json(
       { error: "Publicação sem espécie para verificar." },

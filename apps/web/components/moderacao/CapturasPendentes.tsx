@@ -10,42 +10,49 @@ import { tempoRelativo } from "@/lib/format";
 import type { Post } from "@fisgou/shared";
 
 /**
- * Fila de capturas aguardando verificação nos pesqueiros do vendedor.
- * Aprovar/recusar chama /api/posts/[id]/verificar e some com o item.
+ * Fila de verificação de capturas — moderação Fisgou. O moderador avalia
+ * se a foto é real, se a espécie confere e se ela existe naquela
+ * região/pesqueiro. Aprovar/recusar chama /api/posts/[id]/verificar.
  */
 export function CapturasPendentes({ capturas }: { capturas: Post[] }) {
   const [itens, setItens] = useState(capturas);
 
-  if (itens.length === 0) return null;
-
   return (
-    <section className="mb-6 rounded-2xl border border-border bg-surface p-5">
+    <section className="rounded-2xl border border-border bg-surface p-5">
       <header className="mb-3 flex items-center gap-2">
         <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-brand-soft text-brand">
           <BadgeCheck className="h-5 w-5" aria-hidden="true" />
         </span>
         <div>
           <h2 className="text-base font-semibold leading-tight">
-            Capturas para verificar
+            Verificações pendentes
           </h2>
           <p className="text-xs text-text-2">
-            Confirme as capturas registradas nos seus pesqueiros.
+            A foto é real? A espécie confere e existe nessa região/pesqueiro?
           </p>
         </div>
-        <span className="ml-auto inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-2 text-xs font-bold text-brand-fg">
-          {itens.length}
-        </span>
+        {itens.length > 0 && (
+          <span className="ml-auto inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-2 text-xs font-bold text-brand-fg">
+            {itens.length}
+          </span>
+        )}
       </header>
 
-      <ul className="space-y-3">
-        {itens.map((p) => (
-          <CapturaCard
-            key={p.id}
-            post={p}
-            onResolved={() => setItens((prev) => prev.filter((x) => x.id !== p.id))}
-          />
-        ))}
-      </ul>
+      {itens.length === 0 ? (
+        <p className="py-6 text-center text-sm text-text-2">
+          Nenhuma captura aguardando verificação. 🎣
+        </p>
+      ) : (
+        <ul className="space-y-3">
+          {itens.map((p) => (
+            <CapturaCard
+              key={p.id}
+              post={p}
+              onResolved={() => setItens((prev) => prev.filter((x) => x.id !== p.id))}
+            />
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
