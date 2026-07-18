@@ -71,12 +71,16 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 - ⬜ **A2. Chat: coluna de contatos com altura total** — a lista lateral de conversas deve **sempre preencher a tela inteira** (borda direita descendo até o fim), e não crescer conforme chegam mensagens. Mesmo root cause do A1.
 - ⬜ **A3. Enquete: pergunta ACIMA das opções** — hoje a pergunta (legenda) não aparece claramente antes das barras. Renderizar a pergunta no topo do bloco da enquete, opções abaixo.
 - ⬜ **A4. Composer do feed: chips redundantes** — "Foto / Espécie / Local" levam os três para a MESMA página `/criar`. Não faz sentido. Simplificar (um atalho só, ou chips que abrem `/criar` já com o respectivo picker aberto).
+- ⬜ **A5. Contador de comentários errado ao apagar** — apagando um comentário sendo o dono, ele não some do contador do post ("mesmo apagando conta como 1"). Causa: apagar um comentário-RAIZ cascateia as respostas no banco (`onDelete: Cascade`), mas o `DELETE .../comments/[commentId]` decrementa o contador denormalizado em apenas 1 — as respostas apagadas continuam contadas para sempre. Fix: contar as respostas antes de apagar e decrementar `1 + respostas`.
 
 ### B. Moderação da plataforma (muda o modelo de verificação)
 
 - ✅ **B1. Verificação é dos MODERADORES da Fisgou, não dos pesqueiros** — `role="moderador"` adicionado (nunca atribuível via signup); `/api/posts/[id]/verificar` agora exige moderador; a seção de verificação saiu do painel do vendedor; o login rápido do seed `empty` (`admin@gmail.com`) nasce moderador.
 - ✅ **B2. Painel do moderador** (`/moderacao`, guard por role) — fila **"Verificações pendentes"** com TODAS as capturas em análise (com ou sem pesqueiro; critérios no subtítulo: foto real? espécie confere/existe na região?) + **"Publicações recentes"** com remoção em 2 passos (`DELETE /api/posts/[id]` liberado p/ moderador; decrementa o contador do AUTOR). Entrada "Moderação" na Sidebar/BottomNav só p/ moderador. (futuro: suspender usuário, remover comentário, fila de denúncias, log de ações)
 - ✅ **B3. Verificações pendentes nas notificações** — bloco no topo de `/notificacoes` (só moderador) com contagem e link pro `/moderacao`.
+- ⬜ **B4. Interface de moderação avançada** — a área do moderador deve ter uma **interface própria/diferente** do resto do app (cara de ferramenta administrativa, não de rede social) e mais funções:
+  - **Busca de posts por palavras-chave** potencialmente mal-intencionadas (campo de busca na triagem + lista de termos de atenção configurável que destaca automaticamente posts suspeitos).
+  - Mais funções de moderador: remover comentários, suspender/banir usuário, histórico/log de ações de moderação, fila de denúncias feitas pelos usuários (botão "Denunciar" nos posts), filtros por status/espécie/pesqueiro na fila de verificação.
 
 ### C. Social / notificações / perfil
 

@@ -20,10 +20,20 @@ export async function DELETE(
     return NextResponse.json({ error: "Sem permissão." }, { status: 403 });
   }
 
+  // Apagar um comentário-raiz cascateia as respostas (onDelete: Cascade),
+  // então o contador desconta 1 + as respostas apagadas — decrementar só 1
+  // deixava o contador inflado para sempre (bug A5 da rodada 2).
+  const respostas = await prisma.comment.count({
+    where: { parentId: params.commentId },
+  });
+
   await prisma.comment.delete({ where: { id: params.commentId } });
   await prisma.post
-    .update({ where: { id: params.id }, data: { comentarios: { decrement: 1 } } })
+    .update({
+      where: { id: params.id },
+      data: { comentarios: { decrement: 1 + respostas } },
+    })
     .catch(() => {});
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, removidos: 1 + respostas });
 }
