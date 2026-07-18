@@ -58,29 +58,31 @@ export default async function PesqueiroDetalhe({
 
       <div className="px-4 pt-4">
         <h1 className="text-xl font-bold">{pesqueiro.nome}</h1>
-        <p className="mt-1 flex items-center gap-1 text-sm">
-          {/* Estrela DOURADA = nota do Google. */}
-          <Star
-            className="h-4 w-4 fill-[#F5B301] text-[#F5B301]"
-            aria-hidden="true"
-          />
-          <span className="font-medium">{formatNota(pesqueiro.nota)}</span>
-          <span className="text-text-2">
-            · {pesqueiro.avaliacoes} avaliações no Google
-          </span>
-        </p>
+        {pesqueiro.avaliacoes > 0 && (
+          <p className="mt-1 flex items-center gap-1 text-sm">
+            {/* Estrela DOURADA = nota do Google. */}
+            <Star
+              className="h-4 w-4 fill-[#F5B301] text-[#F5B301]"
+              aria-hidden="true"
+            />
+            <span className="font-medium">{formatNota(pesqueiro.nota)}</span>
+            <span className="text-text-2">
+              · {pesqueiro.avaliacoes} avaliações no Google
+            </span>
+          </p>
+        )}
 
         <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-text-2">
           <Chip as="span" tone="brand">
             {pesqueiroTipoLabel[pesqueiro.tipo]}
           </Chip>
-          {pesqueiro.endereco && (
+          {(pesqueiro.endereco || pesqueiro.cidade) && (
             <span className="inline-flex items-center gap-1">
               <MapPin className="h-3.5 w-3.5" aria-hidden="true" />
-              {pesqueiro.endereco}
+              {pesqueiro.endereco || pesqueiro.cidade}
             </span>
           )}
-          <span>· {pesqueiro.distanciaKm} km</span>
+          {pesqueiro.distanciaKm > 0 && <span>· {pesqueiro.distanciaKm} km</span>}
         </div>
 
         {/* Ações */}
@@ -91,6 +93,13 @@ export default async function PesqueiroDetalhe({
           </Button>
           <CheckInButton pesqueiroId={pesqueiro.id} jaFezCheckIn={jaFezCheckIn} />
         </div>
+
+        {/* Sobre (descrição escrita pelo dono) */}
+        {pesqueiro.descricao && (
+          <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-text-2">
+            {pesqueiro.descricao}
+          </p>
+        )}
       </div>
 
       {/* Espécies comuns aqui */}

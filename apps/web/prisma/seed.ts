@@ -1,7 +1,7 @@
 /**
- * Seed do banco a partir do mock (data/mock.ts) — assim o app já nasce
- * com conteúdo realista. Senha padrão de todos os usuários: "fisgou123".
- * Login demo: marina.pesca@fisgou.app / fisgou123
+ * Seed com dois modos:
+ * - demo: cria conteúdo de exemplo para explorar o app
+ * - empty: deixa o banco limpo para mostrar apenas conteúdo criado pelo usuário
  */
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
@@ -19,11 +19,11 @@ import {
 } from "../data/mock";
 
 const prisma = new PrismaClient();
-
+const mode = process.argv[2] === "demo" ? "demo" : "empty";
 const email = (handle: string) => `${handle}@fisgou.app`;
 
 async function main() {
-  console.log("Limpando tabelas…");
+  console.log(`Limpando tabelas (${mode})…`);
   // Ordem respeita as FKs.
   await prisma.notification.deleteMany();
   await prisma.like.deleteMany();
@@ -36,9 +36,34 @@ async function main() {
   await prisma.species.deleteMany();
   await prisma.user.deleteMany();
 
-  const passwordHash = bcrypt.hashSync("fisgou123", 10);
+  const passwordHash = bcrypt.hashSync(mode === "demo" ? "fisgou123" : "admin123", 10);
 
-  console.log("Usuários…");
+  if (mode !== "demo") {
+    console.log("Criando usuário padrão para login fácil…");
+    await prisma.user.create({
+      data: {
+        id: "admin-user",
+        nome: "Admin Fisgou",
+        handle: "admin",
+        email: "admin@gmail.com",
+        passwordHash,
+        cidade: "Local",
+        bio: "Usuário administrativo de acesso rápido.",
+        cor: "#2C7A7B",
+        iniciais: "AD",
+        criador: false,
+        peixes: 0,
+        especies: 0,
+        seguidores: null,
+        seguindo: null,
+        amigos: null,
+      },
+    });
+    console.log("✅ Banco resetado sem dados de exemplo.");
+    return;
+  }
+
+  console.log("Criando usuários de exemplo…");
   for (const u of users) {
     await prisma.user.create({
       data: {
@@ -61,7 +86,7 @@ async function main() {
     });
   }
 
-  console.log("Espécies…");
+  console.log("Criando espécies de exemplo…");
   for (const s of species) {
     await prisma.species.create({
       data: {
@@ -75,7 +100,7 @@ async function main() {
     });
   }
 
-  console.log("Pesqueiros…");
+  console.log("Criando pesqueiros de exemplo…");
   for (const p of pesqueiros) {
     await prisma.pesqueiro.create({
       data: {
@@ -94,7 +119,7 @@ async function main() {
     });
   }
 
-  console.log("Insígnias…");
+  console.log("Criando insígnias…");
   await Promise.all(
     badges.map((b, i) =>
       prisma.badge.create({
@@ -103,7 +128,7 @@ async function main() {
     ),
   );
 
-  console.log("Posts…");
+  console.log("Criando posts de exemplo…");
   for (const p of posts) {
     await prisma.post.create({
       data: {
@@ -121,7 +146,7 @@ async function main() {
     });
   }
 
-  console.log("Comentários…");
+  console.log("Criando comentários…");
   for (const c of comments) {
     await prisma.comment.create({
       data: {
@@ -134,7 +159,7 @@ async function main() {
     });
   }
 
-  console.log("Coleção (Fisgados) do usuário atual…");
+  console.log("Criando coleção do usuário demo…");
   for (const e of collection) {
     await prisma.collectionEntry.create({
       data: {
@@ -146,7 +171,7 @@ async function main() {
     });
   }
 
-  console.log("Follows…");
+  console.log("Criando follows…");
   for (const handle of followingHandles) {
     const alvo = users.find((u) => u.handle === handle);
     if (alvo) {
@@ -156,7 +181,7 @@ async function main() {
     }
   }
 
-  console.log("Notificações…");
+  console.log("Criando notificações…");
   for (const n of notifications) {
     await prisma.notification.create({
       data: {
@@ -172,7 +197,7 @@ async function main() {
     });
   }
 
-  console.log("✅ Seed concluído.");
+  console.log("✅ Seed de exemplo concluído.");
 }
 
 main()

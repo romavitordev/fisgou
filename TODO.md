@@ -46,14 +46,15 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 ### Feito ✅ (cidade + raio)
 - **Filtro de cidade + pesqueiros próximos** — `Pesqueiro.cidade` (schema/mock/seed); na tela de pesqueiros, chips de cidade (derivadas dos dados) + chip **"Perto de mim"**: geolocalização do navegador → **Haversine** com `lat/lng` recalcula a distância real, ordena do mais perto pro mais longe e filtra por **raio** (10/25/50/100 km); estados de carregando/erro de permissão.
 
+### Feito ✅ (painel de vendedor)
+- **Painel de vendedor** (`/painel`) — pesqueiro ganha `dono` (relação com o User) e `descricao`; página guardada por `role="vendedor"` (pescador é redirecionado). O vendedor **cadastra e edita** seus pesqueiros (nome, tipo, cidade, endereço, descrição, cor da capa, lat/lng com "usar minha localização") via `PesqueiroForm`; dashboard mostra **check-ins, visitantes únicos e publicações** por pesqueiro + atividade recente (quem pescou / posts que marcam o local). APIs `POST /api/pesqueiros` e `PATCH /api/pesqueiros/[id]` (validação em `lib/pesqueiro-input.ts`, só o dono edita). Entrada "Painel" na Sidebar/BottomNav só para vendedor; a página pública do pesqueiro passa a exibir a descrição e omite "0 avaliações/0 km" em locais novos.
+
 ### Pendentes ⬜ (pedidos)
 4. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
 5. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).
 6. **"Falar com Pesqueiro"** — abrir conversa de verdade com o estabelecimento (botão já existe, sem chat por trás ainda).
-7. **Filtro de cidade** na busca de pesqueiros + **pesqueiros próximos** (raio em km via geolocalização).
 8. **Mensagens** real (a tela é stub).
 9. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
-10. **Painel de vendedor** (usar o `role="vendedor"` já salvo para liberar telas/recursos).
 
 ### Feito ✅ (favicon)
 - **Favicon do site** — `app/icon.svg`: peixe (o mesmo `Fish` do lucide/marca) preenchido em **teal green**, `#14916B` claro / `#2DB98B` escuro via `prefers-color-scheme`, com olho branco. `app/apple-icon.png` (180×180): tile da marca (quadrado teal + peixe branco). O Next injeta os `<link>` sozinho. (`.ico` legado dispensado — SVG cobre browsers modernos.)

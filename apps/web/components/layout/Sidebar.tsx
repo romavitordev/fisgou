@@ -11,6 +11,7 @@ import {
   User,
   Plus,
   LogOut,
+  Store,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
@@ -19,7 +20,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { useAuth } from "@/lib/auth";
 import { NotificationsBadge } from "./NotificationsBadge";
 
-const items = [
+const baseItems = [
   { href: "/feed", label: "Início", icon: Home },
   { href: "/buscar", label: "Buscar", icon: Search },
   { href: "/notificacoes", label: "Notificações", icon: Bell },
@@ -27,6 +28,8 @@ const items = [
   { href: "/fisgados", label: "Fisgados", icon: Fish },
   { href: "/perfil", label: "Perfil", icon: User },
 ] as const;
+
+const painelItem = { href: "/painel", label: "Painel", icon: Store } as const;
 
 function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
@@ -41,6 +44,12 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
+
+  // Vendedores ganham a entrada "Painel" (logo após Pesqueiros).
+  const items =
+    user?.role === "vendedor"
+      ? [...baseItems.slice(0, 4), painelItem, ...baseItems.slice(4)]
+      : baseItems;
 
   async function sair() {
     await logout();

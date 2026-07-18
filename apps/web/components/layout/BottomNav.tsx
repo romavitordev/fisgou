@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MapPin, Fish, User, Plus } from "lucide-react";
+import { Home, MapPin, Fish, User, Plus, Store } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { useAuth } from "@/lib/auth";
 
-const items = [
-  { href: "/feed", label: "Início", icon: Home },
-  { href: "/pesqueiros", label: "Pesqueiros", icon: MapPin },
-  { href: "/fisgados", label: "FISGADOS", icon: Fish },
-  { href: "/perfil", label: "Perfil", icon: User },
-] as const;
+const inicio = { href: "/feed", label: "Início", icon: Home } as const;
+const pesqueiros = { href: "/pesqueiros", label: "Pesqueiros", icon: MapPin } as const;
+const fisgados = { href: "/fisgados", label: "FISGADOS", icon: Fish } as const;
+const painel = { href: "/painel", label: "Painel", icon: Store } as const;
+const perfil = { href: "/perfil", label: "Perfil", icon: User } as const;
 
 function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
@@ -22,10 +22,11 @@ function isActive(pathname: string, href: string) {
  */
 export function BottomNav() {
   const pathname = usePathname();
+  const { user } = useAuth();
 
-  // Divide os itens em torno do botão central (2 + [+] + 2).
-  const left = items.slice(0, 2);
-  const right = items.slice(2);
+  // 2 itens + [+] central + 2 itens. Vendedor troca "Fisgados" por "Painel".
+  const left = [inicio, pesqueiros];
+  const right = user?.role === "vendedor" ? [painel, perfil] : [fisgados, perfil];
 
   return (
     <nav

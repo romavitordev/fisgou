@@ -182,9 +182,13 @@ export interface Pesqueiro {
   /** Cidade (para o filtro de cidade na busca). */
   cidade?: string;
   endereco?: string;
+  /** Apresentação escrita pelo dono (vendedor). */
+  descricao?: string;
   /** Cor do thumb/capa placeholder. */
   cor: string;
   /** Coordenadas (para o mapa real do Google). */
   lat?: number;
   lng?: number;
+  /** Id do vendedor que administra o pesqueiro (se houver). */
+  donoId?: string;
 }

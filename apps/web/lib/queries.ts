@@ -171,6 +171,60 @@ export async function getPesqueiroIds() {
   return list.map((p) => p.id);
 }
 
+// ── Painel do vendedor ──────────────────────────────────────────────
+/**
+ * Pesqueiros administrados por `userId` (vendedor) + estatísticas de
+ * engajamento (check-ins, visitantes únicos, publicações que marcam o
+ * local) e atividade recente. Alimenta a tela /painel.
+ */
+export async function getPainelData(userId: string) {
+  const pesqueiros = await prisma.pesqueiro.findMany({
+    where: { donoId: userId },
+    orderBy: { nome: "asc" },
+  });
+
+  return Promise.all(
+    pesqueiros.map(async (p) => {
+      const [totalCheckIns, visitantes, checkIns, totalPosts, posts] =
+        await Promise.all([
+          prisma.checkIn.count({ where: { pesqueiroId: p.id } }),
+          prisma.checkIn.findMany({
+            where: { pesqueiroId: p.id },
+            select: { userId: true },
+            distinct: ["userId"],
+          }),
+          prisma.checkIn.findMany({
+            where: { pesqueiroId: p.id },
+            orderBy: { criadoEm: "desc" },
+            include: { user: true },
+            take: 8,
+          }),
+          prisma.post.count({ where: { pesqueiroId: p.id } }),
+          prisma.post.findMany({
+            where: { pesqueiroId: p.id },
+            orderBy: { criadoEm: "desc" },
+            take: 6,
+            include: { autor: true, species: true },
+          }),
+        ]);
+
+      return {
+        pesqueiro: toPesqueiro(p),
+        totalCheckIns,
+        visitantesUnicos: visitantes.length,
+        totalPosts,
+        checkInsRecentes: checkIns.map((c) => ({
+          user: toUser(c.user),
+          criadoEm: c.criadoEm.toISOString(),
+        })),
+        postsRecentes: posts.map((post) => toPost(post, false, userId)),
+      };
+    }),
+  );
+}
+
+export type PainelPesqueiro = Awaited<ReturnType<typeof getPainelData>>[number];
+
 // ── Perfil ──────────────────────────────────────────────────────────
 export async function getProfile(handle: string, viewerId: string | null) {
   const u = await prisma.user.findUnique({ where: { handle } });

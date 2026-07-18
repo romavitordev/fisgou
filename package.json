@@ -7,7 +7,10 @@
     "dev": "pnpm --filter @fisgou/web dev",
     "build": "pnpm --filter @fisgou/web build",
     "start": "pnpm --filter @fisgou/web start",
-    "lint": "pnpm --filter @fisgou/web lint"
+    "lint": "pnpm --filter @fisgou/web lint",
+    "up": "pnpm --filter @fisgou/web run up",
+    "up:demo": "pnpm --filter @fisgou/web run up:demo",
+    "up:empty": "pnpm --filter @fisgou/web run up:empty"
   },
   "packageManager": "pnpm@9.15.9"
 }

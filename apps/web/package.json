@@ -10,6 +10,11 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "db:reset": "prisma db push --force-reset && tsx prisma/seed.ts",
+    "db:reset:demo": "prisma db push --force-reset && tsx prisma/seed.ts demo",
+    "db:reset:empty": "prisma db push --force-reset && tsx prisma/seed.ts empty",
+    "up": "node ./scripts/run-with-seed.mjs",
+    "up:demo": "node ./scripts/run-with-seed.mjs demo",
+    "up:empty": "node ./scripts/run-with-seed.mjs empty",
     "postinstall": "prisma generate"
   },
   "prisma": {

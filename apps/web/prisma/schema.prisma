@@ -55,6 +55,7 @@ model User {
   commentLikes  CommentLike[]
   taggedIn      PostTag[]
   pollVotes     PollVote[]
+  pesqueiros    Pesqueiro[]    @relation("dono") // pesqueiros que este vendedor administra
 }
 
 model Species {
@@ -207,12 +208,19 @@ model Pesqueiro {
   distanciaKm Float
   cidade      String?
   endereco    String?
+  descricao   String? // apresentação escrita pelo dono
   cor         String
   lat         Float?
   lng         Float?
 
+  // Dono (vendedor) que administra o pesqueiro. Nulo = pesqueiro do catálogo/seed.
+  dono   User?   @relation("dono", fields: [donoId], references: [id], onDelete: SetNull)
+  donoId String?
+
   checkIns CheckIn[]
   posts    Post[]
+
+  @@index([donoId])
 }
 
 model CheckIn {
