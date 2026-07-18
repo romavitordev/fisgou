@@ -14,11 +14,13 @@ import type { ConversationSummary } from "@fisgou/shared";
  */
 export function MensagensView({
   conversasIniciais,
+  initialActiveId = null,
 }: {
   conversasIniciais: ConversationSummary[];
+  initialActiveId?: string | null;
 }) {
   const [conversas, setConversas] = useState(conversasIniciais);
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(initialActiveId);
 
   const carregar = useCallback(async () => {
     try {

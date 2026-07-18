@@ -1,18 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  Share2,
-  Star,
-  MapPin,
-  MessageCircle,
-} from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { ArrowLeft, Share2, Star, MapPin } from "lucide-react";
 import { Chip } from "@/components/ui/Chip";
 import { Avatar } from "@/components/ui/Avatar";
 import { RarityDot } from "@/components/ui/RarityDot";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { CheckInButton } from "@/components/pesqueiros/CheckInButton";
+import {
+  FalarComPesqueiroButton,
+  CombinarPescariaButton,
+} from "@/components/chat/StartChatButtons";
 import { pesqueiroTipoLabel } from "@/lib/rarity";
 import { formatNota } from "@/lib/format";
 import { getPesqueiroDetail, getViewer } from "@/lib/queries";
@@ -87,11 +84,14 @@ export default async function PesqueiroDetalhe({
 
         {/* Ações */}
         <div className="mt-4 flex gap-3">
-          <Button className="flex-1">
-            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-            Falar com Pesqueiro
-          </Button>
+          <FalarComPesqueiroButton pesqueiroId={pesqueiro.id} />
           <CheckInButton pesqueiroId={pesqueiro.id} jaFezCheckIn={jaFezCheckIn} />
+        </div>
+        <div className="mt-3">
+          <CombinarPescariaButton
+            pesqueiroId={pesqueiro.id}
+            pesqueiroNome={pesqueiro.nome}
+          />
         </div>
 
         {/* Sobre (descrição escrita pelo dono) */}

@@ -27,6 +27,60 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => ({}));
 
+  // Grupo ("Combinar Pescaria"): título + membros + evento opcional.
+  if (body.tipo === "grupo") {
+    const titulo =
+      typeof body.titulo === "string" && body.titulo.trim()
+        ? body.titulo.trim().slice(0, 80)
+        : "Pescaria";
+    const idsBrutos: string[] = Array.isArray(body.memberIds)
+      ? body.memberIds.filter((x: unknown): x is string => typeof x === "string")
+      : [];
+    // Confirma que são usuários reais e dedup (sempre inclui o criador).
+    const validos = idsBrutos.length
+      ? (
+          await prisma.user.findMany({
+            where: { id: { in: idsBrutos } },
+            select: { id: true },
+          })
+        ).map((u) => u.id)
+      : [];
+    const memberIds = Array.from(new Set([me.id, ...validos]));
+    if (memberIds.length < 2)
+      return NextResponse.json(
+        { error: "Convide pelo menos um amigo para o grupo." },
+        { status: 400 },
+      );
+
+    let eventoData: Date | null = null;
+    let eventoPesqueiroId: string | null = null;
+    if (body.evento && typeof body.evento === "object") {
+      const d = new Date(body.evento.data);
+      if (body.evento.data && !Number.isNaN(d.getTime())) eventoData = d;
+      if (typeof body.evento.pesqueiroId === "string")
+        eventoPesqueiroId = body.evento.pesqueiroId || null;
+    }
+
+    const conv = await prisma.conversation.create({
+      data: {
+        tipo: "grupo",
+        titulo,
+        eventoData,
+        eventoPesqueiroId,
+        members: { create: memberIds.map((userId) => ({ userId })) },
+        messages: {
+          create: {
+            autorId: me.id,
+            texto: eventoData
+              ? "Bora combinar essa pescaria! 🎣"
+              : "Criei o grupo. Bora combinar! 🎣",
+          },
+        },
+      },
+    });
+    return NextResponse.json({ id: conv.id }, { status: 201 });
+  }
+
   // Conversa com um pesqueiro.
   if (typeof body.pesqueiroId === "string" && body.pesqueiroId) {
     const pq = await prisma.pesqueiro.findUnique({ where: { id: body.pesqueiroId } });

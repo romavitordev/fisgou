@@ -49,11 +49,14 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 ### Feito ✅ (painel de vendedor)
 - **Painel de vendedor** (`/painel`) — pesqueiro ganha `dono` (relação com o User) e `descricao`; página guardada por `role="vendedor"` (pescador é redirecionado). O vendedor **cadastra e edita** seus pesqueiros (nome, tipo, cidade, endereço, descrição, cor da capa, lat/lng com "usar minha localização") via `PesqueiroForm`; dashboard mostra **check-ins, visitantes únicos e publicações** por pesqueiro + atividade recente (quem pescou / posts que marcam o local). APIs `POST /api/pesqueiros` e `PATCH /api/pesqueiros/[id]` (validação em `lib/pesqueiro-input.ts`, só o dono edita). Entrada "Painel" na Sidebar/BottomNav só para vendedor; a página pública do pesqueiro passa a exibir a descrição e omite "0 avaliações/0 km" em locais novos.
 
+### Feito ✅ (sistema de mensagens)
+- **Chat completo** — models `Conversation` (dm|grupo|pesqueiro) / `ConversationMember` (`lastReadAt`) / `Message`; tipos shared (`ConversationSummary`/`Detail`, `Message`, `CombinarEvento`). Camada `lib/chat.ts` (getConversations, getUnreadTotal, getConversationDetail, findOrCreateDM, findOrCreatePesqueiroConversation) e APIs `/api/conversations` (listar/criar DM/pesqueiro/grupo), `/[id]` (detalhe), `/[id]/messages` (polling `?after` + enviar), `/[id]/read`, `/unread`. Só membros leem/escrevem; polling 5s na thread + 8s no badge.
+- **Página `/mensagens` real** — `MensagensView` (lista + thread, 2 colunas no desktop, troca no mobile), `ChatThread` (carga + polling incremental + envio + auto-scroll + marca lida), `ConversationList`, `NewChatButton` (DM com quem você segue). Deep-link `?c=<id>`. Item "Mensagens" na Sidebar + ícone no feed mobile, ambos com badge (`ChatProvider`/`ChatNavBadge`).
+- **ChatDock flutuante** (desktop, estilo Instagram) — botão no canto → painel de conversas → até 3 janelas flutuantes lado a lado; escondido no mobile e em `/mensagens`.
+- **"Falar com Pesqueiro"** — botão da página do pesqueiro cria/abre a conversa `tipo="pesqueiro"` (dock no desktop, `/mensagens?c=` no mobile).
+- **"Combinar Pescaria"** — botão abre modal (nome, data/hora, amigos multi-select), cria grupo com `eventoData`/`eventoPesqueiroId` + mensagem inicial; `ChatThread` mostra card "Pescaria combinada" (data + pesqueiro) no topo.
+
 ### Pendentes ⬜ (pedidos)
-4. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
-5. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).
-6. **"Falar com Pesqueiro"** — abrir conversa de verdade com o estabelecimento (botão já existe, sem chat por trás ainda).
-8. **Mensagens** real (a tela é stub).
 9. **Verificação de captura** — fluxo real de aprovação (hoje status é manual no seed).
 
 ### Feito ✅ (favicon)
