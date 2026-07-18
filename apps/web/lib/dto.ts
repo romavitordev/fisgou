@@ -11,6 +11,9 @@ import type {
   Badge as PrismaBadge,
   CollectionEntry as PrismaCollectionEntry,
   Notification as PrismaNotification,
+  Poll as PrismaPoll,
+  PollOption as PrismaPollOption,
+  PollVote as PrismaPollVote,
 } from "@prisma/client";
 import type {
   User,
@@ -21,6 +24,7 @@ import type {
   Badge,
   CollectionEntry,
   Notification,
+  Poll,
   Rarity,
   WaterType,
   CatchStatus,
@@ -67,14 +71,43 @@ export function toSpecies(s: PrismaSpecies): Species {
   };
 }
 
+/** Enquete com votos por opção; `viewerId` marca a opção votada. */
+export function toPoll(
+  poll: PrismaPoll & {
+    options: (PrismaPollOption & { votes: { id: string }[] })[];
+    votes: PrismaPollVote[];
+  },
+  viewerId: string | null = null,
+): Poll {
+  const options = [...poll.options]
+    .sort((a, b) => a.ordem - b.ordem)
+    .map((o) => ({ id: o.id, texto: o.texto, votos: o.votes.length }));
+  return {
+    id: poll.id,
+    pergunta: poll.pergunta,
+    options,
+    totalVotos: poll.votes.length,
+    votedOptionId: viewerId
+      ? poll.votes.find((v) => v.userId === viewerId)?.optionId
+      : undefined,
+  };
+}
+
 export function toPost(
   p: PrismaPost & {
     autor: PrismaUser;
     species: PrismaSpecies | null;
     pesqueiro?: PrismaPesqueiro | null;
     marcados?: { user: PrismaUser }[];
+    poll?:
+      | (PrismaPoll & {
+          options: (PrismaPollOption & { votes: { id: string }[] })[];
+          votes: PrismaPollVote[];
+        })
+      | null;
   },
   liked = false,
+  viewerId: string | null = null,
 ): Post {
   return {
     id: p.id,
@@ -86,6 +119,7 @@ export function toPost(
     especie: p.species ? toSpecies(p.species) : undefined,
     pesqueiro: p.pesqueiro ? toPesqueiro(p.pesqueiro) : undefined,
     marcados: p.marcados?.map((m) => toUser(m.user)),
+    poll: p.poll ? toPoll(p.poll, viewerId) : undefined,
     status: (p.status as CatchStatus | null) ?? undefined,
     curtidas: p.curtidas,
     comentarios: p.comentarios,

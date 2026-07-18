@@ -40,8 +40,10 @@ Análise de requisitos e backlog de features. Marcação: ✅ feito · 🟡 parc
 - **Marcar pesqueiro na criação** — `Post.pesqueiroId` + relação; `GET /api/pesqueiros` alimenta o `PesqueiroPicker` (mesmo padrão do `SpeciesPicker`); a chip "Marcar pesqueiro" no `/criar` agora funciona; o `PostCard` mostra a localização (estilo Instagram) linkando pro `/pesqueiros/[id]`.
 - **Marcar amigos numa publicação** — model `PostTag` (postId+userId); `GET /api/users/following` alimenta o `FriendsPicker` (multi-select de quem você segue); `POST /api/posts` aceita `amigosIds[]`, cria as marcações e **notifica** cada marcado (tipo novo `marcacao`); `PostCard` mostra "com Fulano, Ciclano" linkando pros perfis.
 
+### Feito ✅ (enquetes)
+- **Enquete no post** — models `Poll`/`PollOption`/`PollVote` (1 voto por usuário, trocar de opção = upsert); no `/criar`, alternador **Foto | Enquete** (2–4 opções, legenda vira a pergunta); `PostCard` renderiza `PollView` com barras de %, voto otimista e contagem total; post-enquete sem foto dispensa o bloco de cor.
+
 ### Pendentes ⬜ (pedidos)
-1. **Enquete no post** (pergunta + opções + votos).
 4. **Chat** (DM 1‑a‑1 e **grupo**) — flutuante no feed (abre/fecha estilo Instagram).
 5. **"Combinar Pescaria"** como função do chat (criar evento/grupo com amigos, data, pesqueiro).
 6. **"Falar com Pesqueiro"** — abrir conversa de verdade com o estabelecimento (botão já existe, sem chat por trás ainda).

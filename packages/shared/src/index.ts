@@ -87,6 +87,23 @@ export interface CollectionEntry {
   capturadoEm?: string;
 }
 
+/** Opção de enquete com contagem de votos. */
+export interface PollOption {
+  id: string;
+  texto: string;
+  votos: number;
+}
+
+/** Enquete anexada a um post (2–4 opções, 1 voto por usuário). */
+export interface Poll {
+  id: string;
+  pergunta: string;
+  options: PollOption[];
+  totalVotos: number;
+  /** Opção votada pelo usuário logado (preenchido nas queries). */
+  votedOptionId?: string;
+}
+
 export interface Post {
   id: string;
   autor: User;
@@ -102,6 +119,8 @@ export interface Post {
   pesqueiro?: Pesqueiro;
   /** Amigos marcados na publicação. */
   marcados?: User[];
+  /** Enquete anexada (posts do tipo enquete). */
+  poll?: Poll;
   status?: CatchStatus;
   curtidas: number;
   comentarios: number;

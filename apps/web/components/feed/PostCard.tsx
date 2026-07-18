@@ -6,6 +6,7 @@ import { RarityDot } from "@/components/ui/RarityDot";
 import { VerificationSeal } from "@/components/ui/VerificationSeal";
 import { LikeButton } from "./LikeButton";
 import { PostMenu } from "./PostMenu";
+import { PollView } from "./PollView";
 import { rarityLabel } from "@/lib/rarity";
 import { tempoRelativo } from "@/lib/format";
 import type { Post } from "@fisgou/shared";
@@ -19,7 +20,7 @@ export function PostCard({
   onDeleted?: (id: string) => void;
   redirectOnDelete?: string;
 }) {
-  const { autor, especie, status, pesqueiro, marcados } = post;
+  const { autor, especie, status, pesqueiro, marcados, poll } = post;
 
   return (
     <Card className="overflow-hidden">
@@ -56,28 +57,34 @@ export function PostCard({
       </div>
 
       {/* Imagem (placeholder colorido até existir upload). Altura limitada
-          pra não criar sensação de "vazio" ao rolar o feed. */}
-      <Link href={`/post/${post.id}`} className="block">
-        {post.imagemUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={post.imagemUrl}
-            alt={especie ? `Foto de ${especie.nome}` : `Foto de ${autor.nome}`}
-            className="max-h-[520px] w-full object-cover"
-          />
-        ) : (
-          <div
-            className="aspect-video max-h-[420px] w-full"
-            style={{ backgroundColor: post.imagemCor }}
-            role="img"
-            aria-label={
-              especie
-                ? `Foto de ${especie.nome}`
-                : `Foto da publicação de ${autor.nome}`
-            }
-          />
-        )}
-      </Link>
+          pra não criar sensação de "vazio" ao rolar o feed. Post de
+          enquete sem foto dispensa o bloco — a enquete é o conteúdo. */}
+      {(post.imagemUrl || !poll) && (
+        <Link href={`/post/${post.id}`} className="block">
+          {post.imagemUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={post.imagemUrl}
+              alt={especie ? `Foto de ${especie.nome}` : `Foto de ${autor.nome}`}
+              className="max-h-[520px] w-full object-cover"
+            />
+          ) : (
+            <div
+              className="aspect-video max-h-[420px] w-full"
+              style={{ backgroundColor: post.imagemCor }}
+              role="img"
+              aria-label={
+                especie
+                  ? `Foto de ${especie.nome}`
+                  : `Foto da publicação de ${autor.nome}`
+              }
+            />
+          )}
+        </Link>
+      )}
+
+      {/* Enquete */}
+      {poll && <PollView poll={poll} />}
 
       {/* Faixa de espécie (só quando há espécie marcada) */}
       {especie && (

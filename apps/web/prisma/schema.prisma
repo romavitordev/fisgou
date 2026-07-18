@@ -54,6 +54,7 @@ model User {
   checkIns      CheckIn[]
   commentLikes  CommentLike[]
   taggedIn      PostTag[]
+  pollVotes     PollVote[]
 }
 
 model Species {
@@ -105,6 +106,38 @@ model Post {
   likes         Like[]
   notifications Notification[]
   marcados      PostTag[]
+  poll          Poll?
+}
+
+model Poll {
+  id       String       @id @default(cuid())
+  post     Post         @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId   String       @unique
+  pergunta String
+  options  PollOption[]
+  votes    PollVote[]
+}
+
+model PollOption {
+  id     String     @id @default(cuid())
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId String
+  texto  String
+  ordem  Int        @default(0)
+  votes  PollVote[]
+}
+
+model PollVote {
+  id       String     @id @default(cuid())
+  poll     Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  pollId   String
+  option   PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  optionId String
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String
+
+  // 1 voto por usuário por enquete (trocar de opção = update).
+  @@unique([pollId, userId])
 }
 
 model PostTag {

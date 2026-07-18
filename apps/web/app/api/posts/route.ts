@@ -19,11 +19,33 @@ export async function POST(req: Request) {
   const me = await getCurrentDbUser();
   if (!me) return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
 
-  const { legenda, localPrivacidade, speciesId, pesqueiroId, amigosIds, imagemUrl } =
-    await req.json().catch(() => ({}));
+  const {
+    legenda,
+    localPrivacidade,
+    speciesId,
+    pesqueiroId,
+    amigosIds,
+    imagemUrl,
+    enquete,
+  } = await req.json().catch(() => ({}));
 
   if (!legenda || !String(legenda).trim()) {
     return NextResponse.json({ error: "Escreva uma legenda." }, { status: 400 });
+  }
+
+  // Enquete (opcional): 2–4 opções não vazias.
+  let opcoesEnquete: string[] | null = null;
+  if (enquete) {
+    const opcoes = Array.isArray(enquete.opcoes)
+      ? enquete.opcoes.map((o: unknown) => String(o).trim()).filter(Boolean)
+      : [];
+    if (opcoes.length < 2 || opcoes.length > 4) {
+      return NextResponse.json(
+        { error: "A enquete precisa de 2 a 4 opções." },
+        { status: 400 },
+      );
+    }
+    opcoesEnquete = opcoes;
   }
 
   const post = await prisma.post.create({
@@ -39,6 +61,19 @@ export async function POST(req: Request) {
       status: speciesId ? "em_analise" : null,
     },
   });
+
+  // Enquete: a pergunta é a própria legenda do post.
+  if (opcoesEnquete) {
+    await prisma.poll.create({
+      data: {
+        postId: post.id,
+        pergunta: String(legenda).trim(),
+        options: {
+          create: opcoesEnquete.map((texto, i) => ({ texto, ordem: i })),
+        },
+      },
+    });
+  }
 
   await prisma.user.update({
     where: { id: me.id },

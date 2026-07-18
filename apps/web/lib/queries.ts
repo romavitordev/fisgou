@@ -36,19 +36,28 @@ async function likedSet(viewerId: string | null, postIds: string[]) {
 // ── Feed / posts ────────────────────────────────────────────────────
 const FEED_LIMIT = 50;
 
+/** Include padrão de post (autor, espécie, pesqueiro, marcados, enquete). */
+const POST_INCLUDE = {
+  autor: true,
+  species: true,
+  pesqueiro: true,
+  marcados: { include: { user: true } },
+  poll: {
+    include: {
+      options: { include: { votes: { select: { id: true } } } },
+      votes: true,
+    },
+  },
+} as const;
+
 export async function getFeed(viewerId: string | null = null) {
   const posts = await prisma.post.findMany({
     orderBy: { criadoEm: "desc" },
     take: FEED_LIMIT,
-    include: {
-      autor: true,
-      species: true,
-      pesqueiro: true,
-      marcados: { include: { user: true } },
-    },
+    include: POST_INCLUDE,
   });
   const liked = await likedSet(viewerId, posts.map((p) => p.id));
-  return posts.map((p) => toPost(p, liked.has(p.id)));
+  return posts.map((p) => toPost(p, liked.has(p.id), viewerId));
 }
 
 /** Conjunto de commentIds curtidos pelo viewer. */
@@ -64,12 +73,7 @@ async function commentLikedSet(viewerId: string | null, commentIds: string[]) {
 export async function getPostDetail(id: string, viewerId: string | null = null) {
   const post = await prisma.post.findUnique({
     where: { id },
-    include: {
-      autor: true,
-      species: true,
-      pesqueiro: true,
-      marcados: { include: { user: true } },
-    },
+    include: POST_INCLUDE,
   });
   if (!post) return null;
   const comentarios = await prisma.comment.findMany({
@@ -80,7 +84,7 @@ export async function getPostDetail(id: string, viewerId: string | null = null) 
   const liked = await likedSet(viewerId, [post.id]);
   const commentsLiked = await commentLikedSet(viewerId, comentarios.map((c) => c.id));
   return {
-    post: toPost(post, liked.has(post.id)),
+    post: toPost(post, liked.has(post.id), viewerId),
     comentarios: comentarios.map((c) => toComment(c, commentsLiked.has(c.id))),
   };
 }
@@ -175,12 +179,7 @@ export async function getProfile(handle: string, viewerId: string | null) {
   const postsRaw = await prisma.post.findMany({
     where: { autorId: u.id },
     orderBy: { criadoEm: "desc" },
-    include: {
-      autor: true,
-      species: true,
-      pesqueiro: true,
-      marcados: { include: { user: true } },
-    },
+    include: POST_INCLUDE,
   });
   const liked = await likedSet(viewerId, postsRaw.map((p) => p.id));
   const col = await getCollectionData(u.id);
@@ -195,7 +194,7 @@ export async function getProfile(handle: string, viewerId: string | null) {
 
   return {
     user: toUser(u),
-    posts: postsRaw.map((p) => toPost(p, liked.has(p.id))),
+    posts: postsRaw.map((p) => toPost(p, liked.has(p.id), viewerId)),
     collection: col,
     badges,
     isFollowing,

@@ -14,6 +14,9 @@ import {
   Check,
   Loader2,
   Users,
+  BarChart3,
+  Plus,
+  Minus,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -51,6 +54,9 @@ export default function CriarPage() {
   const [mostrarAmigosPicker, setMostrarAmigosPicker] = useState(false);
   const [publicando, setPublicando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  // Tipo do conteúdo: foto (padrão) ou enquete (2–4 opções).
+  const [modo, setModo] = useState<"foto" | "enquete">("foto");
+  const [opcoes, setOpcoes] = useState<string[]>(["", ""]);
 
   function escolherFoto(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -62,15 +68,24 @@ export default function CriarPage() {
   async function publicar() {
     if (publicando) return;
     if (!legenda.trim()) {
-      setErro("Escreva uma legenda para publicar.");
+      setErro(
+        modo === "enquete"
+          ? "Escreva a pergunta da enquete."
+          : "Escreva uma legenda para publicar.",
+      );
+      return;
+    }
+    const opcoesLimpas = opcoes.map((o) => o.trim()).filter(Boolean);
+    if (modo === "enquete" && opcoesLimpas.length < 2) {
+      setErro("A enquete precisa de pelo menos 2 opções.");
       return;
     }
     setErro(null);
     setPublicando(true);
     try {
-      // 1) Sobe a foto (se houver) → URL local.
+      // 1) Sobe a foto (se houver e o modo for foto) → URL local.
       let imagemUrl: string | undefined;
-      if (arquivo) {
+      if (modo === "foto" && arquivo) {
         const fd = new FormData();
         fd.append("file", arquivo);
         const up = await fetch("/api/upload", { method: "POST", body: fd });
@@ -90,6 +105,7 @@ export default function CriarPage() {
           speciesId: especie?.id,
           pesqueiroId: pesqueiro?.id,
           amigosIds: amigos.map((a) => a.id),
+          enquete: modo === "enquete" ? { opcoes: opcoesLimpas } : undefined,
         }),
       });
       if (!res.ok) throw new Error();
@@ -128,47 +144,126 @@ export default function CriarPage() {
       </header>
 
       <div className="space-y-5 p-4 pb-28">
-        {/* Adicionar foto */}
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={escolherFoto}
-        />
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          className="relative flex h-56 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border-2 border-dashed border-brand/40 bg-brand-soft/50 text-brand transition-colors hover:bg-brand-soft"
+        {/* Tipo de conteúdo: foto ou enquete */}
+        <div
+          role="tablist"
+          aria-label="Tipo de publicação"
+          className="grid grid-cols-2 gap-2"
         >
-          {preview ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={preview}
-                alt="Pré-visualização"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <span className="absolute bottom-2 right-2 rounded-full bg-black/50 px-3 py-1 text-xs font-medium text-white">
-                Trocar foto
-              </span>
-            </>
-          ) : (
-            <>
-              <Camera className="h-8 w-8" aria-hidden="true" />
-              <span className="text-sm font-semibold">Adicionar foto</span>
-              <span className="text-xs text-text-2">
-                toque para escolher da galeria ou câmera
-              </span>
-            </>
-          )}
-        </button>
+          {(
+            [
+              { id: "foto", label: "Foto", icon: Camera },
+              { id: "enquete", label: "Enquete", icon: BarChart3 },
+            ] as const
+          ).map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={modo === id}
+              onClick={() => setModo(id)}
+              className={cn(
+                "inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2 text-sm font-medium transition-colors",
+                modo === id
+                  ? "border-brand bg-brand-soft text-brand"
+                  : "border-border bg-surface text-text-2 hover:bg-surface-2",
+              )}
+            >
+              <Icon className="h-4 w-4" aria-hidden="true" />
+              {label}
+            </button>
+          ))}
+        </div>
 
-        {/* Legenda */}
+        {modo === "foto" ? (
+          <>
+            {/* Adicionar foto */}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={escolherFoto}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="relative flex h-56 w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-2xl border-2 border-dashed border-brand/40 bg-brand-soft/50 text-brand transition-colors hover:bg-brand-soft"
+            >
+              {preview ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={preview}
+                    alt="Pré-visualização"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                  <span className="absolute bottom-2 right-2 rounded-full bg-black/50 px-3 py-1 text-xs font-medium text-white">
+                    Trocar foto
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Camera className="h-8 w-8" aria-hidden="true" />
+                  <span className="text-sm font-semibold">Adicionar foto</span>
+                  <span className="text-xs text-text-2">
+                    toque para escolher da galeria ou câmera
+                  </span>
+                </>
+              )}
+            </button>
+          </>
+        ) : (
+          /* Editor da enquete: 2–4 opções */
+          <div className="space-y-2 rounded-2xl border border-border bg-surface p-3">
+            {opcoes.map((o, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input
+                  value={o}
+                  onChange={(e) =>
+                    setOpcoes((prev) =>
+                      prev.map((x, xi) => (xi === i ? e.target.value : x)),
+                    )
+                  }
+                  placeholder={`Opção ${i + 1}`}
+                  maxLength={40}
+                  className="campo"
+                  aria-label={`Opção ${i + 1} da enquete`}
+                />
+                {opcoes.length > 2 && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setOpcoes((prev) => prev.filter((_, xi) => xi !== i))
+                    }
+                    aria-label={`Remover opção ${i + 1}`}
+                    className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-text-2 hover:bg-surface-2 hover:text-red-500"
+                  >
+                    <Minus className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                )}
+              </div>
+            ))}
+            {opcoes.length < 4 && (
+              <button
+                type="button"
+                onClick={() => setOpcoes((prev) => [...prev, ""])}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium text-brand hover:bg-brand-soft"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+                Adicionar opção
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Legenda (na enquete, é a pergunta) */}
         <textarea
           value={legenda}
           onChange={(e) => setLegenda(e.target.value)}
-          placeholder="Escreva uma legenda…"
+          placeholder={
+            modo === "enquete" ? "Faça uma pergunta…" : "Escreva uma legenda…"
+          }
           rows={3}
           className="w-full resize-none rounded-2xl border border-border bg-surface px-4 py-3 text-sm placeholder:text-text-2 focus:border-brand focus:outline-none"
         />
