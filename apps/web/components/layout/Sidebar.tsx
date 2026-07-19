@@ -15,6 +15,7 @@ import {
   MessageCircle,
   ShieldCheck,
   Clapperboard,
+  ShoppingBag,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
@@ -31,6 +32,7 @@ const baseItems = [
   { href: "/notificacoes", label: "Notificações", icon: Bell },
   { href: "/mensagens", label: "Mensagens", icon: MessageCircle },
   { href: "/pesqueiros", label: "Pesqueiros", icon: MapPin },
+  { href: "/lojas", label: "Lojas", icon: ShoppingBag },
   { href: "/fisgados", label: "Fisgados", icon: Fish },
   { href: "/perfil", label: "Perfil", icon: User },
 ] as const;
