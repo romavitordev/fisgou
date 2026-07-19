@@ -253,6 +253,36 @@
   }
 }
 
+/* ── Reels (player fake do mock) ────────────────────────────────── */
+@keyframes reel-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+@keyframes reel-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg) scale(1);
+  }
+  50% {
+    transform: translateY(-14px) rotate(3deg) scale(1.04);
+  }
+}
+@keyframes reel-hint {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateY(-6px);
+    opacity: 0.5;
+  }
+}
+
 /* Acessibilidade: respeita quem prefere menos movimento. */
 @media (prefers-reduced-motion: reduce) {
   *,

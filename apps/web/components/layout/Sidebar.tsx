@@ -14,6 +14,7 @@ import {
   Store,
   MessageCircle,
   ShieldCheck,
+  Clapperboard,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
@@ -25,6 +26,7 @@ import { ChatNavBadge } from "./ChatNavBadge";
 
 const baseItems = [
   { href: "/feed", label: "Início", icon: Home },
+  { href: "/reels", label: "Reels", icon: Clapperboard },
   { href: "/buscar", label: "Buscar", icon: Search },
   { href: "/notificacoes", label: "Notificações", icon: Bell },
   { href: "/mensagens", label: "Mensagens", icon: MessageCircle },
@@ -58,9 +60,9 @@ export function Sidebar() {
   // moderador ganha "Moderação" (após Notificações).
   const items =
     user?.role === "vendedor"
-      ? [...baseItems.slice(0, 5), painelItem, ...baseItems.slice(5)]
+      ? [...baseItems.slice(0, 6), painelItem, ...baseItems.slice(6)]
       : user?.role === "moderador"
-        ? [...baseItems.slice(0, 3), moderacaoItem, ...baseItems.slice(3)]
+        ? [...baseItems.slice(0, 4), moderacaoItem, ...baseItems.slice(4)]
         : baseItems;
 
   async function sair() {
