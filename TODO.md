@@ -109,7 +109,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - ✅ A1. Chat: cabeçalho e teclado fixos
 - ✅ A2. Lista de conversas com altura total
 - ✅ A3. Enquete: pergunta acima das opções
-- ✅ A4. Composer: atalhos abrem a criação no contexto certo
+- ✅ A4. Composer: chips redundantes "Foto/Espécie/Local" REMOVIDOS (levavam todos pra /criar) — composer ficou só com o campo "No que você fisgou hoje?" que abre /criar. (O deep-link `/criar?abrir=` continua funcionando como atalho, mas sem os chips.)
 - ✅ A5. Contador de comentários após exclusão
 - ⬜ A6. [class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-brand-fg"] ainda tem essa logo em um dos tamanhos de tela. Deve ser substituida pela logo simplificada da fisgou original que é apenas um anzol. Pegar no site deles.
 
@@ -133,7 +133,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 
 ### E. Novas áreas (mock inicial)
 - ✅ E1. **LANCES** (ex-Reels; mock visual) — rota `/lances` estilo TikTok: player vertical em tela cheia com scroll-snap (um vídeo por vez), tap para play/pause, barra de progresso animada, ações laterais (curtir otimista, comentários, compartilhar, contadores compactos "12,4 mil"), overlay com autor + Seguir + legenda + som (disco girando), dica "Arraste pra cima", volume mudo/ativo. Dados em `data/lances-mock.ts` (6 lances com gradiente + cena — o "vídeo" é placeholder até existir upload real). Nav: **"Lances" é item PRINCIPAL na BottomNav mobile** (Início · Lances · [+] · Pesqueiros · Perfil; Fisgados continua na tab do perfil e na Sidebar) + item "Lances" na Sidebar desktop. Falta (funcional, próxima fase): upload/streaming de vídeo real, curtida/comentário persistidos, publicação de lance no fluxo de criação.
-- ✅ E2. Marketplace de lojas parceiras (mock) — rota `/lojas`: vitrine com "Ofertas em destaque" (carrossel horizontal de produtos em promoção), filtro por categoria (chips) e grade de lojas parceiras (logo, categoria, nota, cidade). `/lojas/[id]`: capa + dados + catálogo de produtos (preço em BRL, badge OFERTA, botão "Adicionar" com feedback) + "Falar com a loja" (modal de aviso — chat com loja é próxima fase). Dados em `data/lojas-mock.ts` (5 lojas, ~20 produtos; helpers `precoBRL`/`produtosDestaque`). Nav: "Lojas" na Sidebar desktop (mobile ainda sem slot na BottomNav — decidir). Sem checkout/estoque/chat reais. Verificado: vitrine, detalhe, filtro, modal e "Adicionar" OK.
+- ✅ E2. Marketplace de lojas parceiras (mock) — rota `/lojas`: vitrine com "Ofertas em destaque" (carrossel horizontal de produtos em promoção), filtro por categoria (chips) e grade de lojas parceiras (logo, categoria, nota, cidade). `/lojas/[id]`: capa + dados + catálogo de produtos (preço em BRL, badge OFERTA, botão "Adicionar" com feedback) + "Falar com a loja" (modal de aviso — chat com loja é próxima fase). Dados em `data/lojas-mock.ts` (5 lojas, ~20 produtos; helpers `precoBRL`/`produtosDestaque`). Nav: "Lojas" na Sidebar desktop + ícone ShoppingBag no header do feed no mobile (mesmo padrão de notificações/mensagens; BottomNav segue com 5 slots). Sem checkout/estoque/chat reais. Verificado: vitrine, detalhe, filtro, modal e "Adicionar" OK.
 - ⬜ E3. Área de membros do criador
 
 ### F. Pesqueiros e vendedor
