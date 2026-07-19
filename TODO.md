@@ -42,6 +42,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - verifica capturas em análise;
 - remove publicações mal-intencionadas;
 - vê fila de verificações pendentes nas notificações.
+- Cadastra novos peixes disponiveis no catalogo (terá um banco de dados só com os peixes brasileiros futuramente)
 
 ### 3) Funcionalidades já implementadas
 
@@ -71,6 +72,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - leitura de mensagens e badge de não lidas;
 - “Combinar Pescaria” com evento e card no topo da conversa;
 - dock flutuante de conversas no desktop.
+- line break nas mensagens, mensagens longas estão se extendendo horizontalmente para fora do chat.
 
 #### Administração
 - painel de vendedor;
@@ -109,6 +111,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - ✅ A3. Enquete: pergunta acima das opções
 - ✅ A4. Composer: atalhos abrem a criação no contexto certo
 - ✅ A5. Contador de comentários após exclusão
+- ⬜ A6. [class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-brand-fg"] ainda tem essa logo em um dos tamanhos de tela. Deve ser substituida pela logo simplificada da fisgou original que é apenas um anzol. Pegar no site deles.
 
 ### B. Moderação e triagem
 - ✅ B1. Verificação feita por moderadores
@@ -119,7 +122,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 ### C. Social e notificações
 - ✅ C1. Curtida em comentário gera notificação — tipo `curtida_comentario`; notifica o dono do comentário curtido (numa resposta, o dono da resposta — nunca o dono do raiz); não notifica a si mesmo; descurtir remove a notificação. Toast + página de notificações renderizam ("X curtiu seu comentário.").
 - ✅ C2. Recomendação de pescadores por relevância — "Pescadores para seguir" agora exclui quem o viewer já segue, ordena por fama (seguidores/amigos, nulls por último) e sobe quem é da MESMA CIDADE do viewer pro topo. Verificado: seguir alguém remove da lista; usuário da mesma cidade passa na frente dos famosos.
-- ⬜ C3. Mensagem no perfil público + privacidade de DM ("Quem pode me enviar mensagens: Todos / Apenas amigos")
+- ✅ C3. Mensagem no perfil público + privacidade de DM — botão "Mensagem" no perfil de outro usuário abre/cria a DM (dock no desktop, `/mensagens?c=` no mobile). `User.dmPrivacy` ("todos" | "amigos") com seletor "Quem pode me enviar mensagens" no editar perfil; "amigos" = seguimento mútuo, validado no `POST /api/conversations` (403 com mensagem amigável; conversa já existente continua abrindo). Verificado: bloqueio sem mútuo → erro no perfil; com mútuo → DM abre no dock.
 - ⬜ C4. Compartilhar para chat interno e para fora
 - 🟡 C5. Convite de "Combinar Pescaria" para o grupo de amigos — a base já existe (modal seleciona amigos + data/hora + pesqueiro → cria grupo com card do evento; ex.: 5 amigos, sábado 15:00, Pesqueiro do Zé). Falta: os convidados serem **notificados** do convite (hoje o grupo só aparece na lista de mensagens, sem aviso) e **RSVP** no card do evento (Vou / Não vou, com contagem de confirmados).
 
