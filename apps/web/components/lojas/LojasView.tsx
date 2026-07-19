@@ -1,8 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
-import { Store, MapPin, Star, ChevronRight, Tag } from "lucide-react";
+import {
+  Store,
+  MapPin,
+  Star,
+  ChevronRight,
+  ChevronLeft,
+  Tag,
+} from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatNota } from "@/lib/format";
 import {
@@ -18,6 +25,13 @@ import {
  */
 export function LojasView() {
   const [categoria, setCategoria] = useState<string | null>(null);
+  const ofertasRef = useRef<HTMLDivElement>(null);
+
+  function rolarOfertas(dir: 1 | -1) {
+    const el = ofertasRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: "smooth" });
+  }
 
   const lojas = categoria
     ? lojasMock.filter((l) => l.categoria === categoria)
@@ -41,12 +55,34 @@ export function LojasView() {
       </header>
 
       {/* Ofertas em destaque */}
-      <section className="mb-6">
+      <section className="group relative mb-6">
         <h2 className="mb-2 flex items-center gap-1.5 text-sm font-semibold">
           <Tag className="h-4 w-4 text-brand" aria-hidden="true" />
           Ofertas em destaque
         </h2>
-        <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 no-scrollbar">
+
+        {/* Setas (desktop) — no mobile usa-se o swipe. */}
+        <button
+          type="button"
+          onClick={() => rolarOfertas(-1)}
+          aria-label="Ver ofertas anteriores"
+          className="absolute left-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface/90 text-text shadow-sm backdrop-blur transition-colors hover:bg-surface-2 md:flex"
+        >
+          <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={() => rolarOfertas(1)}
+          aria-label="Ver mais ofertas"
+          className="absolute right-1 top-1/2 z-10 hidden h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-surface/90 text-text shadow-sm backdrop-blur transition-colors hover:bg-surface-2 md:flex"
+        >
+          <ChevronRight className="h-5 w-5" aria-hidden="true" />
+        </button>
+
+        <div
+          ref={ofertasRef}
+          className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 no-scrollbar"
+        >
           {produtosDestaque.map((p) => (
             <Link
               key={`${p.lojaId}-${p.id}`}
