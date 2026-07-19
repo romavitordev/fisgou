@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { cn } from "@/lib/cn";
-import type { ReelMock } from "@/data/reels-mock";
+import type { LanceMock } from "@/data/lances-mock";
 
 /** 12400 → "12,4 mil"; 1200000 → "1,2 mi". */
 function compact(n: number): string {
@@ -25,27 +25,27 @@ function compact(n: number): string {
 }
 
 /**
- * Reels (E1, mock visual): player vertical em tela cheia com scroll-snap —
- * um vídeo por vez, ações na lateral, autor/legenda/som sobrepostos.
+ * Lances (E1, mock visual): vídeos curtos em tela cheia com scroll-snap —
+ * um lance por vez, ações na lateral, autor/legenda/som sobrepostos.
  * O "vídeo" é um placeholder (gradiente + cena) até existir upload real.
  */
-export function ReelsView({ reels }: { reels: ReelMock[] }) {
+export function LancesView({ lances }: { lances: LanceMock[] }) {
   return (
     // Ancorado na viewport do <main> (relative) — mesma técnica do chat.
     <div className="absolute inset-0 snap-y snap-mandatory overflow-y-auto bg-black">
-      {reels.map((reel, i) => (
-        <ReelCard key={reel.id} reel={reel} primeiro={i === 0} />
+      {lances.map((lance, i) => (
+        <LanceCard key={lance.id} lance={lance} primeiro={i === 0} />
       ))}
     </div>
   );
 }
 
-function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
+function LanceCard({ lance, primeiro }: { lance: LanceMock; primeiro: boolean }) {
   const [tocando, setTocando] = useState(true);
   const [mudo, setMudo] = useState(true);
   const [curtido, setCurtido] = useState(false);
 
-  const curtidas = reel.curtidas + (curtido ? 1 : 0);
+  const curtidas = lance.curtidas + (curtido ? 1 : 0);
 
   return (
     <section className="relative h-full w-full snap-start snap-always overflow-hidden">
@@ -55,7 +55,7 @@ function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
         aria-label={tocando ? "Pausar" : "Reproduzir"}
         onClick={() => setTocando((v) => !v)}
         className="absolute inset-0 h-full w-full cursor-pointer"
-        style={{ background: reel.gradiente }}
+        style={{ background: lance.gradiente }}
       >
         <span
           aria-hidden="true"
@@ -65,7 +65,7 @@ function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
             animationPlayState: tocando ? "running" : "paused",
           }}
         >
-          {reel.cena}
+          {lance.cena}
         </span>
 
         {/* Vinhetas p/ legibilidade dos overlays */}
@@ -84,7 +84,7 @@ function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
       <header className="pointer-events-none absolute inset-x-0 top-0 flex items-center justify-between p-4 text-white">
         <span className="inline-flex items-center gap-2 text-lg font-bold">
           <Clapperboard className="h-5 w-5" aria-hidden="true" />
-          Reels
+          Lances
         </span>
         <button
           type="button"
@@ -115,44 +115,44 @@ function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
         />
         <Acao
           icon={<MessageCircle className="h-7 w-7" aria-hidden="true" />}
-          label={compact(reel.comentarios)}
+          label={compact(lance.comentarios)}
           ariaLabel="Comentários"
         />
         <Acao
           icon={<Share2 className="h-7 w-7" aria-hidden="true" />}
-          label={compact(reel.compartilhamentos)}
+          label={compact(lance.compartilhamentos)}
           ariaLabel="Compartilhar"
         />
         {/* "Disco" do som girando */}
         <span
           className="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-lg border-2 border-white/70 text-xl"
           style={{
-            background: reel.autor.cor,
+            background: lance.autor.cor,
             animation: "spin 6s linear infinite",
             animationPlayState: tocando ? "running" : "paused",
           }}
           aria-hidden="true"
         >
-          {reel.cena}
+          {lance.cena}
         </span>
       </aside>
 
       {/* Autor + legenda + som (rodapé esquerdo) */}
       <footer className="pointer-events-none absolute bottom-4 left-0 right-16 flex flex-col gap-2 p-4 text-white">
         <div className="pointer-events-auto flex items-center gap-2">
-          <Link href={`/u/${reel.autor.handle}`} className="shrink-0">
+          <Link href={`/u/${lance.autor.handle}`} className="shrink-0">
             <Avatar
-              iniciais={reel.autor.iniciais}
-              cor={reel.autor.cor}
+              iniciais={lance.autor.iniciais}
+              cor={lance.autor.cor}
               size="sm"
               ring
             />
           </Link>
           <Link
-            href={`/u/${reel.autor.handle}`}
+            href={`/u/${lance.autor.handle}`}
             className="truncate text-sm font-semibold hover:underline"
           >
-            {reel.autor.nome}
+            {lance.autor.nome}
           </Link>
           <button
             type="button"
@@ -162,11 +162,11 @@ function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
           </button>
         </div>
         <p className="line-clamp-2 text-sm leading-snug drop-shadow">
-          {reel.legenda}
+          {lance.legenda}
         </p>
         <p className="flex items-center gap-1.5 text-xs text-white/85">
           <Music className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          <span className="truncate">{reel.som}</span>
+          <span className="truncate">{lance.som}</span>
         </p>
       </footer>
 
@@ -186,7 +186,7 @@ function ReelCard({ reel, primeiro }: { reel: ReelMock; primeiro: boolean }) {
         <div
           className="h-full bg-white/90"
           style={{
-            animation: `reel-progress ${reel.duracaoS}s linear infinite`,
+            animation: `reel-progress ${lance.duracaoS}s linear infinite`,
             animationPlayState: tocando ? "running" : "paused",
           }}
         />

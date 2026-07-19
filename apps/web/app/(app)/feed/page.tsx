@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Search, Bell, MessageCircle, Clapperboard } from "lucide-react";
+import { Search, Bell, MessageCircle } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { Logo } from "@/components/layout/Logo";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
@@ -37,11 +37,6 @@ export default async function FeedPage() {
                 <MessageCircle className="h-5 w-5" aria-hidden="true" />
               </IconButton>
               <ChatNavBadge />
-            </span>
-            <span className="md:hidden">
-              <IconButton label="Reels" href="/reels">
-                <Clapperboard className="h-5 w-5" aria-hidden="true" />
-              </IconButton>
             </span>
             {/* No desktop o toggle vive na Sidebar; evita duplicar. */}
             <ThemeToggle className="md:hidden" />

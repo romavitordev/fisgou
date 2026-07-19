@@ -26,7 +26,7 @@ import { ChatNavBadge } from "./ChatNavBadge";
 
 const baseItems = [
   { href: "/feed", label: "Início", icon: Home },
-  { href: "/reels", label: "Reels", icon: Clapperboard },
+  { href: "/lances", label: "Lances", icon: Clapperboard },
   { href: "/buscar", label: "Buscar", icon: Search },
   { href: "/notificacoes", label: "Notificações", icon: Bell },
   { href: "/mensagens", label: "Mensagens", icon: MessageCircle },

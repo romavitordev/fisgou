@@ -1,11 +1,11 @@
 /**
- * Mock dos vídeos curtos (Reels) — E1 da rodada 2. Enquanto não há
- * upload/streaming de vídeo real, cada reel é um "player" visual com
+ * Mock dos vídeos curtos (LANCES) — E1 da rodada 2. Enquanto não há
+ * upload/streaming de vídeo real, cada lance é um "player" visual com
  * gradiente + dados de autor/legenda/som. Trocar por model Prisma
- * (Reel + mídia real) quando o pipeline de vídeo existir.
+ * (Lance + mídia real) quando o pipeline de vídeo existir.
  */
 
-export interface ReelMock {
+export interface LanceMock {
   id: string;
   autor: { nome: string; handle: string; cor: string; iniciais: string };
   legenda: string;
@@ -21,7 +21,7 @@ export interface ReelMock {
   compartilhamentos: number;
 }
 
-export const reelsMock: ReelMock[] = [
+export const lancesMock: LanceMock[] = [
   {
     id: "r1",
     autor: { nome: "Marina Tavares", handle: "marina.pesca", cor: "#14916B", iniciais: "MT" },

@@ -2,11 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, MapPin, Fish, User, Plus, Store, ShieldCheck } from "lucide-react";
+import {
+  Home,
+  MapPin,
+  Fish,
+  User,
+  Plus,
+  Store,
+  ShieldCheck,
+  Clapperboard,
+} from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useAuth } from "@/lib/auth";
 
 const inicio = { href: "/feed", label: "Início", icon: Home } as const;
+const lances = { href: "/lances", label: "Lances", icon: Clapperboard } as const;
 const pesqueiros = { href: "/pesqueiros", label: "Pesqueiros", icon: MapPin } as const;
 const fisgados = { href: "/fisgados", label: "FISGADOS", icon: Fish } as const;
 const painel = { href: "/painel", label: "Painel", icon: Store } as const;
@@ -25,15 +35,16 @@ export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
 
-  // 2 itens + [+] central + 2 itens. Vendedor troca "Fisgados" por "Painel";
-  // moderador troca por "Moderação".
-  const left = [inicio, pesqueiros];
+  // 2 itens + [+] central + 2 itens. LANCES é principal no mobile (Fisgados
+  // continua na tab do perfil e na Sidebar). Vendedor troca "Pesqueiros" por
+  // "Painel"; moderador por "Moderação".
+  const left = [inicio, lances];
   const right =
     user?.role === "vendedor"
       ? [painel, perfil]
       : user?.role === "moderador"
         ? [moderacao, perfil]
-        : [fisgados, perfil];
+        : [pesqueiros, perfil];
 
   return (
     <nav

@@ -132,7 +132,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - ⬜ D3. Captura de foto/vídeo na hora
 
 ### E. Novas áreas (mock inicial)
-- ✅ E1. Reels (mock visual) — rota `/reels` estilo TikTok: player vertical em tela cheia com scroll-snap (um vídeo por vez), tap para play/pause, barra de progresso animada, ações laterais (curtir otimista, comentários, compartilhar, contadores compactos "12,4 mil"), overlay com autor + Seguir + legenda + som (disco girando), dica "Arraste pra cima", volume mudo/ativo. Dados em `data/reels-mock.ts` (6 reels com gradiente + cena — o "vídeo" é placeholder até existir upload real). Nav: item "Reels" na Sidebar + ícone no feed mobile. Falta (funcional, próxima fase): upload/streaming de vídeo real, curtida/comentário persistidos, publicação de reel no fluxo de criação.
+- ✅ E1. **LANCES** (ex-Reels; mock visual) — rota `/lances` estilo TikTok: player vertical em tela cheia com scroll-snap (um vídeo por vez), tap para play/pause, barra de progresso animada, ações laterais (curtir otimista, comentários, compartilhar, contadores compactos "12,4 mil"), overlay com autor + Seguir + legenda + som (disco girando), dica "Arraste pra cima", volume mudo/ativo. Dados em `data/lances-mock.ts` (6 lances com gradiente + cena — o "vídeo" é placeholder até existir upload real). Nav: **"Lances" é item PRINCIPAL na BottomNav mobile** (Início · Lances · [+] · Pesqueiros · Perfil; Fisgados continua na tab do perfil e na Sidebar) + item "Lances" na Sidebar desktop. Falta (funcional, próxima fase): upload/streaming de vídeo real, curtida/comentário persistidos, publicação de lance no fluxo de criação.
 - ⬜ E2. Marketplace de lojas parceiras
 - ⬜ E3. Área de membros do criador
 
