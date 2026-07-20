@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   Camera,
@@ -9,18 +9,24 @@ import {
   ChevronRight,
   Fish,
   LogOut,
-  MoreHorizontal,
+  Menu,
   Trash2,
+  Plus,
   UserPlus,
   UserCheck,
   MessageCircle,
   Loader2,
+  Bookmark,
+  Heart,
+  Archive,
+  BookOpen,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatRow } from "@/components/perfil/StatRow";
 import { BadgeRow } from "@/components/perfil/BadgeRow";
+import { AchievementRow } from "@/components/perfil/AchievementRow";
 import { SpeciesCard } from "@/components/fisgados/SpeciesCard";
 import { LockedSpeciesCard } from "@/components/fisgados/LockedSpeciesCard";
 import { PostCard } from "@/components/feed/PostCard";
@@ -35,13 +41,9 @@ import type {
   Badge,
 } from "@fisgou/shared";
 
-type Tab = "publicacoes" | "fisgados" | "insignias";
+type Tab = "publicacoes" | "fisgados" | "insignias" | "conjunto";
 
-const tabs: { id: Tab; label: string }[] = [
-  { id: "publicacoes", label: "Publicações" },
-  { id: "fisgados", label: "Fisgados" },
-  { id: "insignias", label: "Insígnias" },
-];
+const STORAGE_KEY = "fisgou-profile-conjuntos";
 
 export interface ProfileData {
   user: User;
@@ -80,6 +82,53 @@ export function ProfileView({
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [removingAvatar, setRemovingAvatar] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "publicacoes", label: "Publicações" },
+    { id: "fisgados", label: "Fisgados" },
+    { id: "insignias", label: "Insígnias" },
+    ...(isMe ? [{ id: "conjunto" as Tab, label: "Conjunto" }] : []),
+  ];
+
+  const equipamentoOptions = [
+    "Isca pronta",
+    "Vara",
+    "Molinete",
+    "Linha",
+    "Boia",
+    "Anzol",
+    "Chumbada",
+    "Alicate",
+  ] as const;
+
+  type Equipamento = (typeof equipamentoOptions)[number];
+  interface Conjunto {
+    id: string;
+    nome: string;
+    itens: Equipamento[];
+  }
+
+  const [conjuntos, setConjuntos] = useState<Conjunto[]>([]);
+  const [editingConjunto, setEditingConjunto] = useState(false);
+  const [novoNomeConjunto, setNovoNomeConjunto] = useState("");
+  const [novoItens, setNovoItens] = useState<Equipamento[]>([]);
+  const [conjuntoErro, setConjuntoErro] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw) as Conjunto[];
+      if (Array.isArray(saved)) setConjuntos(saved);
+    } catch {
+      // ignore malformed storage
+    }
+  }, [setConjuntos]);
+
+  useEffect(() => {
+    if (!isMe) return;
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(conjuntos));
+  }, [conjuntos, isMe]);
 
   async function sair() {
     await logout();
@@ -204,15 +253,23 @@ export function ProfileView({
           <div className="absolute right-3 top-3">
             <button
               type="button"
-              aria-label="Ajustes"
+              aria-label="Menu"
               aria-expanded={menuAberto}
               onClick={() => setMenuAberto((v) => !v)}
               className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur transition-colors hover:bg-black/30"
             >
-              <MoreHorizontal className="h-5 w-5" aria-hidden="true" />
+              <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
             {menuAberto && (
-              <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-lg">
+              <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-lg">
+                <button
+                  type="button"
+                  onClick={() => router.push("/perfil/preferences")}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-text transition-colors hover:bg-surface-2"
+                >
+                  <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                  Preferências
+                </button>
                 <button
                   type="button"
                   onClick={sair}
@@ -295,6 +352,8 @@ export function ProfileView({
           <StatRow stats={user.stats} />
         </div>
 
+        {/* AchievementRow moved to Insígnias tab to keep profile header cleaner. */}
+
         <div className="flex gap-3 px-4 pt-4">
           {isMe ? (
             <Button
@@ -343,6 +402,69 @@ export function ProfileView({
           <p role="alert" className="px-4 pt-2 text-sm text-red-600 dark:text-red-400">
             {dmErro}
           </p>
+        )}
+
+        {isMe && (
+          <div className="mt-4 rounded-3xl border border-border bg-surface p-4 shadow-sm">
+            <p className="mb-3 text-sm font-semibold text-text">Acessos rápidos</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => router.push("/salvos")}
+                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
+              >
+                <Bookmark className="h-5 w-5 text-brand" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold text-text">Salvos</p>
+                  <p className="text-sm text-text-2">Veja conteúdos guardados</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/curtidas")}
+                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
+              >
+                <Heart className="h-5 w-5 text-red-500" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold text-text">Curtidas</p>
+                  <p className="text-sm text-text-2">Acesse publicações que você curtiu</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/arquivados")}
+                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
+              >
+                <Archive className="h-5 w-5 text-text-2" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold text-text">Arquivados</p>
+                  <p className="text-sm text-text-2">Histórico e itens armazenados</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/stories")}
+                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
+              >
+                <BookOpen className="h-5 w-5 text-brand" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold text-text">Stories</p>
+                  <p className="text-sm text-text-2">Veja o mockup de stories</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => router.push("/perfil/preferences")}
+                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
+              >
+                <SlidersHorizontal className="h-5 w-5 text-brand" aria-hidden="true" />
+                <div>
+                  <p className="font-semibold text-text">Preferências</p>
+                  <p className="text-sm text-text-2">Ajuste as configurações do app</p>
+                </div>
+              </button>
+            </div>
+          </div>
         )}
 
         <div
@@ -407,9 +529,171 @@ export function ProfileView({
 
           {tab === "insignias" && (
             <div className="space-y-4">
+              <AchievementRow
+                heaviest={
+                  (posts.find((p) => p.especie)?.especie as Species) ??
+                  (entries[0]?.species as Species | undefined)
+                }
+                longest={
+                  (posts.find((p) => p.especie)?.especie as Species) ??
+                  (entries[0]?.species as Species | undefined)
+                }
+              />
               <BadgeRow badges={badges} />
               {isMe && (
                 <ProgressoColecao capturadas={capturadas} total={total} />
+              )}
+            </div>
+          )}
+
+          {tab === "conjunto" && (
+            <div className="space-y-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold">Conjuntos de pesca</h2>
+                  <p className="mt-1 text-sm text-text-2">
+                    Organize até 6 conjuntos com os equipamentos usados nas suas saídas.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    setEditingConjunto(true);
+                    setConjuntoErro(null);
+                    setNovoNomeConjunto("");
+                    setNovoItens([]);
+                  }}
+                  disabled={conjuntos.length >= 6}
+                >
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  Adicionar conjunto
+                </Button>
+              </div>
+
+              {editingConjunto && (
+                <Card className="space-y-4 p-4">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold">Novo conjunto</p>
+                      <p className="text-sm text-text-2">
+                        Escolha o nome e selecione os equipamentos.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setEditingConjunto(false)}
+                      className="text-sm font-medium text-text-2 hover:text-text"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="block text-sm font-medium text-text">
+                      Nome do conjunto
+                      <input
+                        value={novoNomeConjunto}
+                        onChange={(event) => setNovoNomeConjunto(event.target.value)}
+                        className="mt-1 w-full rounded-xl border border-border bg-bg px-3 py-2 text-sm text-text outline-none transition-colors focus:border-brand"
+                        placeholder="Ex.: Tarde no lago"
+                      />
+                    </label>
+                    <div className="space-y-2">
+                      <p className="text-sm font-medium text-text">Equipamentos</p>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {equipamentoOptions.map((item) => (
+                          <button
+                            key={item}
+                            type="button"
+                            onClick={() => {
+                              setNovoItens((current) =>
+                                current.includes(item)
+                                  ? current.filter((i) => i !== item)
+                                  : [...current, item],
+                              );
+                            }}
+                            className={cn(
+                              "rounded-2xl border px-3 py-2 text-left text-sm transition-colors",
+                              novoItens.includes(item)
+                                ? "border-brand bg-brand/10 text-text"
+                                : "border-border bg-bg text-text-2 hover:border-brand",
+                            )}
+                          >
+                            {item}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {conjuntoErro && (
+                    <p className="text-sm text-red-600">{conjuntoErro}</p>
+                  )}
+
+                  <Button
+                    onClick={() => {
+                      if (!novoNomeConjunto.trim()) {
+                        setConjuntoErro("Digite um nome para o conjunto.");
+                        return;
+                      }
+                      if (novoItens.length === 0) {
+                        setConjuntoErro("Selecione ao menos um equipamento.");
+                        return;
+                      }
+                      setConjuntos((current) => [
+                        ...current,
+                        {
+                          id: crypto.randomUUID(),
+                          nome: novoNomeConjunto.trim(),
+                          itens: novoItens,
+                        },
+                      ]);
+                      setEditingConjunto(false);
+                    }}
+                  >
+                    Salvar conjunto
+                  </Button>
+                </Card>
+              )}
+
+              {conjuntos.length > 0 ? (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {conjuntos.map((conjunto) => (
+                    <Card key={conjunto.id} className="space-y-3 p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-base font-semibold">{conjunto.nome}</p>
+                          <p className="text-sm text-text-2">
+                            {conjunto.itens.length} itens
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setConjuntos((current) =>
+                              current.filter((item) => item.id !== conjunto.id),
+                            )
+                          }
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-surface-2 text-text-2 hover:bg-surface"
+                          aria-label="Remover conjunto"
+                        >
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {conjunto.itens.map((item) => (
+                          <span
+                            key={item}
+                            className="rounded-full bg-surface-2 px-3 py-1 text-xs text-text-2"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <EmptyState texto="Nenhum conjunto criado ainda. Use o botão acima para começar." />
               )}
             </div>
           )}

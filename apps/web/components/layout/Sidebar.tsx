@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { Logo } from "./Logo";
-import { ThemeToggle } from "./ThemeToggle";
 import { Avatar } from "@/components/ui/Avatar";
 import { useAuth } from "@/lib/auth";
 import { NotificationsBadge } from "./NotificationsBadge";
@@ -124,11 +123,8 @@ export function Sidebar() {
         </Link>
       </nav>
 
-      {/* Rodapé: tema + usuário + logout */}
+      {/* Rodapé: usuário + logout */}
       <div className="mt-auto flex flex-col gap-1 pt-4">
-        <div className="flex justify-center xl:justify-start">
-          <ThemeToggle />
-        </div>
         <Link
           href="/perfil"
           className="flex items-center gap-3 rounded-xl px-2 py-2 transition-colors hover:bg-surface-2 max-xl:justify-center"

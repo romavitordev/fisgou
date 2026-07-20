@@ -367,6 +367,8 @@ export const badges: Badge[] = [
   { id: "b3", nome: "50 espécies", icon: "Star", tier: "normal" },
   { id: "b4", nome: "10 pesqueiros", icon: "MapPin", tier: "normal" },
   { id: "b5", nome: "Água salgada", icon: "Waves", tier: "normal" },
+  { id: "b6", nome: "Fisgados mais Pesados", icon: "Anchor", tier: "normal" },
+  { id: "b7", nome: "Maiores Fisgados", icon: "Ruler", tier: "normal" },
 ];
 
 // ── Pesqueiros ──────────────────────────────────────────────────────

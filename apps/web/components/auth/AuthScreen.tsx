@@ -84,6 +84,7 @@ export function AuthScreen({ mode }: { mode: Mode }) {
         <Link href="/" aria-label="Voltar para a página inicial">
           <Logo />
         </Link>
+        {/* Login/cadastro são públicos: sem menu de preferências aqui. */}
         <ThemeToggle />
       </header>
 

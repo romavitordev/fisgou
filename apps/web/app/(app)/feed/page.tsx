@@ -1,13 +1,13 @@
 import Link from "next/link";
-import { Search, Bell, MessageCircle, ShoppingBag } from "lucide-react";
+import { Search, Bell, MessageCircle, ShoppingBag, Clapperboard } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { Logo } from "@/components/layout/Logo";
-import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { NotificationsBadge } from "@/components/layout/NotificationsBadge";
 import { ChatNavBadge } from "@/components/layout/ChatNavBadge";
 import { Composer } from "@/components/feed/Composer";
 import { FeedTimeline } from "@/components/feed/FeedTimeline";
+import { StoriesBar } from "@/components/feed/StoriesBar";
 import { getFeed, getViewer } from "@/lib/queries";
 
 // Lê do banco/sessão a cada requisição.
@@ -22,30 +22,31 @@ export default async function FeedPage() {
       <TopBar
         actions={
           <>
-            <IconButton label="Buscar" href="/buscar">
+            <IconButton label="Pesquisa" href="/buscar">
               <Search className="h-5 w-5" aria-hidden="true" />
             </IconButton>
-            {/* Notificações + mensagens no mobile (no desktop ficam na Sidebar). */}
-            <span className="relative md:hidden">
-              <IconButton label="Notificações" href="/notificacoes">
-                <Bell className="h-5 w-5" aria-hidden="true" />
+            <span className="md:hidden">
+              <IconButton label="Shorts" href="/lances">
+                <Clapperboard className="h-5 w-5" aria-hidden="true" />
               </IconButton>
-              <NotificationsBadge />
+            </span>
+            <span className="md:hidden">
+              <IconButton label="Marketplace" href="/lojas">
+                <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+              </IconButton>
             </span>
             <span className="relative md:hidden">
-              <IconButton label="Mensagens" href="/mensagens">
+              <IconButton label="Chat" href="/mensagens">
                 <MessageCircle className="h-5 w-5" aria-hidden="true" />
               </IconButton>
               <ChatNavBadge />
             </span>
-            {/* Lojas no mobile (no desktop fica na Sidebar). */}
-            <span className="md:hidden">
-              <IconButton label="Lojas" href="/lojas">
-                <ShoppingBag className="h-5 w-5" aria-hidden="true" />
+            <span className="relative md:hidden">
+              <IconButton label="Notificação" href="/notificacoes">
+                <Bell className="h-5 w-5" aria-hidden="true" />
               </IconButton>
+              <NotificationsBadge />
             </span>
-            {/* No desktop o toggle vive na Sidebar; evita duplicar. */}
-            <ThemeToggle className="md:hidden" />
           </>
         }
       >
@@ -54,6 +55,7 @@ export default async function FeedPage() {
       </TopBar>
 
       <div className="space-y-3 p-3">
+        <StoriesBar />
         <Composer user={viewer} />
         <FeedTimeline initialPosts={posts} />
       </div>

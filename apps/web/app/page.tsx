@@ -30,6 +30,8 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <Logo />
           <div className="flex items-center gap-2">
+            {/* Landing é pública: não existe menu de preferências aqui,
+                então o seletor de tema precisa ficar acessível. */}
             <ThemeToggle />
             <Link href="/login">
               <Button variant="ghost" size="sm">

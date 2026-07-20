@@ -81,13 +81,13 @@ export function LojasView() {
 
         <div
           ref={ofertasRef}
-          className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-2 no-scrollbar"
+          className="flex snap-x gap-3 overflow-x-auto px-4 pb-2 no-scrollbar"
         >
           {produtosDestaque.map((p) => (
             <Link
               key={`${p.lojaId}-${p.id}`}
               href={`/lojas/${p.lojaId}`}
-              className="w-40 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-surface transition-colors hover:bg-surface-2"
+              className="w-40 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:-translate-y-0.5 hover:border-brand hover:shadow-lg"
             >
               <span
                 className="flex h-24 items-center justify-center text-4xl"

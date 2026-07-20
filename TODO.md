@@ -9,6 +9,7 @@ Atualização: 18/07/2026. Marcação: ✅ feito · 🟡 parcial · ⬜ pendente
 - ✅ Rodada 1 do produto: entregue
 - ✅ Moderação: estruturada e funcional
 - 🟡 Rodada 2: correções de UX, social e composer ainda pendem
+- 🟡 Perfil: layout, Conjunto e configurações em progresso
 
 ## Análise completa do código atual
 
@@ -138,6 +139,19 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 
 ### F. Pesqueiros e vendedor
 - ⬜ F1. Espécies do pesqueiro no cadastro — o vendedor seleciona, ao cadastrar/editar o pesqueiro, quais **espécies podem ser encontradas** nele (multi-select do catálogo). A página pública do pesqueiro passa a mostrar as espécies reais em "Espécies comuns aqui" (hoje é uma amostra qualquer do banco) e a verificação de captura ganha contexto (a espécie declarada existe naquele pesqueiro?). Modelo: relação N:N `PesqueiroSpecies`.
+- ⬜ F2. Melhorar a experiência da área de Fisgados com foco em raridade e resumo de conquistas — a seção de Fisgados deve começar com uma visão mais limpa e estratégica, mostrando inicialmente apenas as espécies mais raras da coleção, em vez de exibir tudo de forma densa logo no primeiro carregamento. O objetivo é reduzir a sobrecarga visual e destacar o que realmente importa para o usuário no início da experiência.
+  - Comportamento esperado:
+    - na entrada na área de Fisgados, exibir apenas os itens mais raros da coleção em uma visão inicial enxuta;
+    - adicionar um botão de "Ver Mais" no canto superior direito, com comportamento claro e intuitivo;
+    - ao abrir o "Ver Mais", expandir a área com blocos ou seções temáticas para apresentar os principais resumos do usuário, como "Último Fisgado", "Maior Fisgado" e "Fisgado Mais Pesado";
+    - essas seções devem ser organizadas visualmente de forma hierárquica, destacando o contexto da coleção e os marcos mais relevantes do pescador.
+  - Critérios de aceitação:
+    - a tela inicial não fica poluída com excesso de itens;
+    - o botão "Ver Mais" fica visível e acessível no header da seção;
+    - ao clicar, a área expande com os cards/blocos de resumo corretamente preenchidos;
+    - os dados exibidos devem refletir de forma consistente a realidade da coleção do usuário, respeitando raridade, data de captura e métricas como peso e tamanho quando disponíveis;
+    - a experiência deve funcionar bem em mobile e desktop, sem quebrar o fluxo de navegação.
+  - Valor esperado: melhorar a percepção de progresso do usuário, dar mais destaque para os fisgados mais marcantes e tornar a área mais elegante, menos carregada e mais alinhada com a proposta gamificada do produto.
 
 ---
 
@@ -157,4 +171,36 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 - ⬜ Tempo real verdadeiro (WebSocket/SSE)
 - ⬜ Testes, CI e observabilidade
 - ⬜ PWA/SEO da landing
+- ⬜ Tela de configurações do app, incluindo seletor de tema (claro/escuro) e outras preferências de conta e experiência
+
+---
+
+## Mockups visuais para apresentação
+
+> **Auditoria da rodada do Codex (revisada):** a estrutura pedida (hotbar
+> Início/Pesqueiros/+/Fisgados/Perfil e header Pesquisa/Shorts/Marketplace/
+> Chat/Notificação) ficou correta, mas foram corrigidas 5 regressões:
+> (1) a BottomNav perdeu as entradas por papel — vendedor e moderador
+> ficavam **sem acesso** a `/painel` e `/moderacao` no mobile;
+> (2) o `ThemeToggle` foi removido da landing e do login/cadastro, que são
+> **páginas públicas sem menu de preferências** (restaurado nas duas);
+> (3) um 6º ícone "Stories" no header mobile (a barra de stories já está no
+> feed) — removido, ficaram os 5 pedidos;
+> (4) `Avatar` recebeu `z-30` global só pra corrigir um detalhe do story —
+> revertido (arriscava sobrepor modais no app inteiro);
+> (5) `StoriesBar` reescrito: tinha `any` nos tipos, *stale closure* no
+> loop de progresso (a pausa lia valor obsoleto), `setState` impuro dentro
+> de updater e faltava o "Seu story +" pedido no item 10.
+
+- ✅ G1. Stories na página do feed: adicionar uma barra de "Stories" no topo do feed (como Instagram) para a apresentação. Incluir carrossel horizontal de avatares/círculos com estado (novo / visto), apoio para tocar/abrir em modal overlay e placeholder de imagens. Criar variantes mobile e desktop e nota sobre animação de transição entre stories para demonstrar comportamento esperado.
+
+- ⬜ G2. Margem lateral na seção "Ofertas" (mobile): ajustar o mock para adicionar uma pequena margem/padding lateral na vitrine de "Ofertas em destaque" na versão mobile, evitando que os cards encostem nas bordas do viewport. Valores sugeridos: padding horizontal 12–16px; manter radius e sombra do card para apresentação; incluir captura de tela exemplo no mock.
+
+- ⬜ G3. Novos Status/Conquistas no perfil: incluir duas novas conquistas visuais no perfil do usuário para a apresentação:
+	- **Fisgados mais Pesados**: badge mostrando o maior peso registrado pelo usuário; exibir ícone de balança/anzol e valor (ex.: 12,4 kg). Tooltip descrevendo critério: "Maior peso verificado em uma captura marcada".
+	- **Maiores Fisgados**: badge mostrando maior comprimento/medida (quando disponível) ou destaque por espécie; exibir ícone de fita métrica e valor (ex.: 78 cm). Tooltip descrevendo critério: "Maior comprimento verificado em uma captura marcada".
+	- Incluir mock de seção de conquistas no perfil com ambas badges, estados bloqueado/desbloqueado e contadores.
+
+- ✅ G4. Mock de telas de Salvos / Curtidas / Arquivados / Preferências criado e acessível a partir do perfil.
+
 

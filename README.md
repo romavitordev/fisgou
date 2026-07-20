@@ -57,6 +57,7 @@ O projeto está em uma fase funcional de produto, com o núcleo do app já opera
 - marketplace de lojas parceiras;
 - área de membros do criador;
 - evolução para armazenamento externo, Postgres e tempo real.
+- mockups de preferências, stories e painéis de salvos / curtidas / arquivados já estão adicionados à interface como protótipos de navegação.
 
 ## Perfis de usuário
 
