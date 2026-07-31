@@ -6,9 +6,6 @@ import {
   Camera,
   SlidersHorizontal,
   Crown,
-  ChevronRight,
-  Fish,
-  LogOut,
   Menu,
   Trash2,
   Plus,
@@ -16,19 +13,15 @@ import {
   UserCheck,
   MessageCircle,
   Loader2,
-  Bookmark,
-  Heart,
-  Archive,
-  BookOpen,
 } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { StatRow } from "@/components/perfil/StatRow";
 import { BadgeRow } from "@/components/perfil/BadgeRow";
-import { AchievementRow } from "@/components/perfil/AchievementRow";
-import { SpeciesCard } from "@/components/fisgados/SpeciesCard";
-import { LockedSpeciesCard } from "@/components/fisgados/LockedSpeciesCard";
+import { ProfileMenu } from "@/components/perfil/ProfileMenu";
+import { FisgadosTab } from "@/components/perfil/FisgadosTab";
+import { ProgressoColecao } from "@/components/fisgados/ProgressoColecao";
 import { PostCard } from "@/components/feed/PostCard";
 import { useOpenConv } from "@/components/chat/StartChatButtons";
 import { cn } from "@/lib/cn";
@@ -260,27 +253,14 @@ export function ProfileView({
             >
               <Menu className="h-5 w-5" aria-hidden="true" />
             </button>
-            {menuAberto && (
-              <div className="absolute right-0 mt-2 w-52 overflow-hidden rounded-xl border border-border bg-surface py-1 shadow-lg">
-                <button
-                  type="button"
-                  onClick={() => router.push("/perfil/preferences")}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-text transition-colors hover:bg-surface-2"
-                >
-                  <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
-                  Preferências
-                </button>
-                <button
-                  type="button"
-                  onClick={sair}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-text transition-colors hover:bg-surface-2"
-                >
-                  <LogOut className="h-4 w-4" aria-hidden="true" />
-                  Sair
-                </button>
-              </div>
-            )}
           </div>
+        )}
+        {isMe && (
+          <ProfileMenu
+            open={menuAberto}
+            onClose={() => setMenuAberto(false)}
+            onLogout={sair}
+          />
         )}
 
         <div className="absolute -bottom-10 left-4">
@@ -352,7 +332,6 @@ export function ProfileView({
           <StatRow stats={user.stats} />
         </div>
 
-        {/* AchievementRow moved to Insígnias tab to keep profile header cleaner. */}
 
         <div className="flex gap-3 px-4 pt-4">
           {isMe ? (
@@ -404,69 +383,6 @@ export function ProfileView({
           </p>
         )}
 
-        {isMe && (
-          <div className="mt-4 rounded-3xl border border-border bg-surface p-4 shadow-sm">
-            <p className="mb-3 text-sm font-semibold text-text">Acessos rápidos</p>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => router.push("/salvos")}
-                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
-              >
-                <Bookmark className="h-5 w-5 text-brand" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-text">Salvos</p>
-                  <p className="text-sm text-text-2">Veja conteúdos guardados</p>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push("/curtidas")}
-                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
-              >
-                <Heart className="h-5 w-5 text-red-500" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-text">Curtidas</p>
-                  <p className="text-sm text-text-2">Acesse publicações que você curtiu</p>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push("/arquivados")}
-                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
-              >
-                <Archive className="h-5 w-5 text-text-2" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-text">Arquivados</p>
-                  <p className="text-sm text-text-2">Histórico e itens armazenados</p>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push("/stories")}
-                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
-              >
-                <BookOpen className="h-5 w-5 text-brand" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-text">Stories</p>
-                  <p className="text-sm text-text-2">Veja o mockup de stories</p>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => router.push("/perfil/preferences")}
-                className="flex items-center gap-3 rounded-3xl border border-border bg-bg px-4 py-4 text-left transition-colors hover:border-brand"
-              >
-                <SlidersHorizontal className="h-5 w-5 text-brand" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-text">Preferências</p>
-                  <p className="text-sm text-text-2">Ajuste as configurações do app</p>
-                </div>
-              </button>
-            </div>
-          </div>
-        )}
-
         <div
           role="tablist"
           aria-label="Conteúdo do perfil"
@@ -513,36 +429,23 @@ export function ProfileView({
             </div>
           )}
 
+          {/* FISGADOS (item 4): Maior/Mais Pesado/Último + 6 mais raros +
+              Ver mais/Ver todos → catálogo. */}
           {tab === "fisgados" && (
-            <>
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-                {entries.map((entry) => (
-                  <SpeciesCard key={entry.species.id} entry={entry} />
-                ))}
-                {isMe && locked.map((s) => <LockedSpeciesCard key={s.id} />)}
-              </div>
-              {isMe && (
-                <ProgressoColecao capturadas={capturadas} total={total} />
-              )}
-            </>
+            <FisgadosTab
+              entries={entries}
+              locked={locked}
+              capturadas={capturadas}
+              total={total}
+              isMe={isMe}
+            />
           )}
 
+          {/* INSÍGNIAS (item 5): só conquistas + progresso da coleção. */}
           {tab === "insignias" && (
             <div className="space-y-4">
-              <AchievementRow
-                heaviest={
-                  (posts.find((p) => p.especie)?.especie as Species) ??
-                  (entries[0]?.species as Species | undefined)
-                }
-                longest={
-                  (posts.find((p) => p.especie)?.especie as Species) ??
-                  (entries[0]?.species as Species | undefined)
-                }
-              />
               <BadgeRow badges={badges} />
-              {isMe && (
-                <ProgressoColecao capturadas={capturadas} total={total} />
-              )}
+              <ProgressoColecao capturadas={capturadas} total={total} />
             </div>
           )}
 
@@ -711,40 +614,3 @@ function EmptyState({ texto }: { texto: string }) {
   );
 }
 
-function ProgressoColecao({
-  capturadas,
-  total,
-}: {
-  capturadas: number;
-  total: number;
-}) {
-  const pct = Math.round((capturadas / total) * 100);
-  const faltam = total - capturadas;
-  return (
-    <Card className="mt-4 p-4">
-      <div className="flex items-center justify-between gap-2">
-        <span className="inline-flex items-center gap-2 text-sm font-semibold">
-          <Fish className="h-4 w-4 text-brand" aria-hidden="true" />
-          Coleção Fisgados
-        </span>
-        <span className="inline-flex items-center gap-1 text-sm font-semibold text-brand">
-          {capturadas}/{total}
-          <ChevronRight className="h-4 w-4 text-text-2" aria-hidden="true" />
-        </span>
-      </div>
-      <div
-        className="mt-3 h-2 w-full overflow-hidden rounded-full bg-surface-2"
-        role="progressbar"
-        aria-valuenow={pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label="Progresso da coleção Fisgados"
-      >
-        <div className="h-full rounded-full bg-brand" style={{ width: `${pct}%` }} />
-      </div>
-      <p className="mt-2 text-xs text-text-2">
-        {pct}% da coleção completa · faltam {faltam} espécies
-      </p>
-    </Card>
-  );
-}

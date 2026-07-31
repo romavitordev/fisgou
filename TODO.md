@@ -177,6 +177,20 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 
 ## Mockups visuais para apresentação
 
+> **Rodada de correção (coisas fora do lugar):**
+> - **Perfil limpo (item 8/9):** o card gigante "Acessos rápidos" (Salvos/
+>   Curtidas/Arquivados/Stories/Preferências) que o Codex jogou no corpo do
+>   perfil foi REMOVIDO. Tudo isso virou o **menu "3 barras"** (`ProfileMenu`,
+>   drawer lateral) com a estrutura completa do item 9 agrupada: Preferências ·
+>   Sua atividade (Salvos/Curtidos/Arquivados/Notificações) · Conta (Config,
+>   Parceiros, Bloqueados, Ocultados, Comentários, Marcações) · Ajuda/Privacidade/
+>   Sobre · Lixeira/Desativar · Sair. Itens sem página mostram "Em breve".
+> - **Fisgados (item 4):** os resumos **Maior / Mais Pesado / Último Fisgado**
+>   estavam na aba errada (Insígnias) — movidos pra aba **Fisgados** (`FisgadosTab`),
+>   junto com "6 mais raros" + "Ver mais" (expande a coleção) + "Ver todos → catálogo"
+>   + contador X/140. Insígnias ficou só com **Conquistas + progresso** (item 5).
+> - `ProgressoColecao` extraído para componente reutilizável.
+>
 > **Auditoria da rodada do Codex (revisada):** a estrutura pedida (hotbar
 > Início/Pesqueiros/+/Fisgados/Perfil e header Pesquisa/Shorts/Marketplace/
 > Chat/Notificação) ficou correta, mas foram corrigidas 5 regressões:
