@@ -79,9 +79,11 @@ export function LojasView() {
           <ChevronRight className="h-5 w-5" aria-hidden="true" />
         </button>
 
+        {/* Full-bleed (-mx-4) com inset px-4: margem lateral simétrica de
+            16px e os cards conseguem rolar até a borda (peek). */}
         <div
           ref={ofertasRef}
-          className="flex snap-x gap-3 overflow-x-auto px-4 pb-2 no-scrollbar"
+          className="-mx-4 flex snap-x scroll-px-4 gap-3 overflow-x-auto px-4 pb-2 no-scrollbar"
         >
           {produtosDestaque.map((p) => (
             <Link

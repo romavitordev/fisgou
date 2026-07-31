@@ -208,7 +208,7 @@ O modelo de dados já cobre publicação, interação social, coleção, pesquei
 
 - ✅ G1. Stories na página do feed: adicionar uma barra de "Stories" no topo do feed (como Instagram) para a apresentação. Incluir carrossel horizontal de avatares/círculos com estado (novo / visto), apoio para tocar/abrir em modal overlay e placeholder de imagens. Criar variantes mobile e desktop e nota sobre animação de transição entre stories para demonstrar comportamento esperado.
 
-- ⬜ G2. Margem lateral na seção "Ofertas" (mobile): ajustar o mock para adicionar uma pequena margem/padding lateral na vitrine de "Ofertas em destaque" na versão mobile, evitando que os cards encostem nas bordas do viewport. Valores sugeridos: padding horizontal 12–16px; manter radius e sombra do card para apresentação; incluir captura de tela exemplo no mock.
+- ✅ G2. Margem lateral na seção "Ofertas" (mobile): carrossel full-bleed (`-mx-4`) com inset `px-4` + `scroll-px-4` → primeiro card a 16px da borda (margem simétrica) e cards rolam até a borda (peek). Verificado no mobile: `card.left = 16px`, carrossel até `375px`. ajustar o mock para adicionar uma pequena margem/padding lateral na vitrine de "Ofertas em destaque" na versão mobile, evitando que os cards encostem nas bordas do viewport. Valores sugeridos: padding horizontal 12–16px; manter radius e sombra do card para apresentação; incluir captura de tela exemplo no mock.
 
 - ⬜ G3. Novos Status/Conquistas no perfil: incluir duas novas conquistas visuais no perfil do usuário para a apresentação:
 	- **Fisgados mais Pesados**: badge mostrando o maior peso registrado pelo usuário; exibir ícone de balança/anzol e valor (ex.: 12,4 kg). Tooltip descrevendo critério: "Maior peso verificado em uma captura marcada".
